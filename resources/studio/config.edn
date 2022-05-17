@@ -1,4 +1,10 @@
-{:timbre/cljs {:min-level [[#{"pinkgorilla.nrepl.*"} :warn]
+{:timbre/clj {:min-level [[#{"pinkgorilla.nrepl.*"} :warn]
+                           [#{"org.eclipse.jetty.*"} :warn]
+                           [#{"webly.*"} :info]
+                           [#{"*"} :info]]}
+
+ 
+ :timbre/cljs {:min-level [[#{"pinkgorilla.nrepl.*"} :warn]
                            [#{"org.eclipse.jetty.*"} :warn]
                            [#{"webly.*"} :info]
                            [#{"*"} :info]]}

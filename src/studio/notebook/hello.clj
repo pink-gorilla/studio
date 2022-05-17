@@ -1,8 +1,8 @@
-(ns notebook.hello)
+(ns studio.notebook.hello)
 
 ;; when you add notebooks to the folder: goldly/notebooks
 ;; then this files will appear here.
 
-(println "hello from clojure")
+(println "welcome to goldly studio")
 
 (+ 7 7)

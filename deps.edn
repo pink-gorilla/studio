@@ -6,6 +6,7 @@
         org.pinkgorilla/goldly-docs {:mvn/version "0.4.523"}
         studio/dataset {:local/root "./dataset" :deps/manifest :deps}
         studio/smile {:local/root "./smile" :deps/manifest :deps}
+        studio/svg {:local/root "./svg_clj" :deps/manifest :deps}
         ;studio/arrow {:local/root "./arrow" :deps/manifest :deps}
         ;studio/misc {:local/root "./misc" :deps/manifest :deps}
         }
