@@ -1,0 +1,7 @@
+{:name "studio" ; a simple goldly extension that loads sci code into the browser.
+ ; run
+ :autoload-cljs-dir ["studio/lib"
+                     "studio/page"]
+
+
+}

@@ -1,0 +1,41 @@
+{:paths ["src"
+         "resources" ; json resources
+         "target/webly" ; in case we build ourselves.
+         ]
+ :deps {org.clojure/clojure    {:mvn/version "1.10.3"}
+        org.pinkgorilla/goldly-docs {:mvn/version "0.4.523"}}
+
+ :aliases
+ {:outdated
+  {:extra-deps {com.github.liquidz/antq {:mvn/version "RELEASE"}}
+   :main-opts ["-m"
+               "antq.core"]}
+  :cljfmt-fix
+  {:extra-deps {cljfmt/cljfmt {:mvn/version "0.8.0"}}
+   :main-opts ["-m" "cljfmt.main" "fix" "--indents" "cljfmt.edn"]}
+
+  ; RUN SERVICES (keep running)
+  :docs-run
+  {:jvm-opts ["-Dmaven.wagon.rto=90000"]
+   :exec-fn modular.system/start!
+   :exec-args {:profile "jetty"
+               :config ["webly/config.edn" "goldly/config.edn" "goldly/docs-config.edn"
+                        "studio/config.edn"]
+               :services "goldly/docs-services.edn"}}
+
+  ; BUILD BUNDLE (then exit)
+  :docs-build 
+  {:jvm-opts ["-Dmaven.wagon.rto=90000"]
+   :exec-fn goldly.app.build/goldly-build
+   :exec-args {:profile "compile2"
+               :config ["webly/config.edn" "goldly/config.edn" "goldly/docs-config.edn"
+                        "studio/config.edn"]}}
+
+  ;; nb eval
+
+  :nbeval {:exec-fn reval.task/nbeval
+           :exec-args {:config "demo.edn"}}
+
+
+;           
+  }}
