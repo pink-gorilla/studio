@@ -1,0 +1,7 @@
+{:paths ["src"]
+ :deps {org.clojars.haifengl/smile {:mvn/version "2.6.0"}
+        org.bytedeco/javacpp-platform  {:mvn/version  "1.5.4"}
+        org.bytedeco/openblas-platform  {:mvn/version "0.3.10-1.5.4"}
+        org.bytedeco/arpack-ng-platform {:mvn/version "3.7.0-1.5.4"}}}
+
+

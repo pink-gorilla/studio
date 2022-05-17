@@ -1,0 +1,12 @@
+{:paths ["src"]
+ :deps
+ {
+  ;scicloj/tablecloth {:mvn/version "6.076"} ; brings techml-dataset
+  ;com.taoensso/nippy {:mvn/version "2.14.0"}
+  ;techascent/tech.io {:mvn/version "4.07"} 
+ 
+  ;generateme/fastmath {:mvn/version "2.1.6"}
+
+ }
+
+}

@@ -3,7 +3,13 @@
          "target/webly" ; in case we build ourselves.
          ]
  :deps {org.clojure/clojure    {:mvn/version "1.10.3"}
-        org.pinkgorilla/goldly-docs {:mvn/version "0.4.523"}}
+        org.pinkgorilla/goldly-docs {:mvn/version "0.4.523"}
+        studio/dataset {:local/root "./dataset" :deps/manifest :deps}
+        ;studio/smile {:local/root "./smile" :deps/manifest :deps}
+        ;studio/arrow {:local/root "./arrow" :deps/manifest :deps}
+        ;studio/misc {:local/root "./misc" :deps/manifest :deps}
+        }
+        
 
  :aliases
  {:outdated
@@ -19,7 +25,7 @@
   {:jvm-opts ["-Dmaven.wagon.rto=90000"]
    :exec-fn modular.system/start!
    :exec-args {:profile "jetty"
-               :config ["webly/config.edn" "goldly/config.edn" "goldly/docs-config.edn"
+               :config ["webly/config.edn" "goldly/config.edn" ;"goldly/docs-config.edn"
                         "studio/config.edn"]
                :services "goldly/docs-services.edn"}}
 
@@ -28,7 +34,7 @@
   {:jvm-opts ["-Dmaven.wagon.rto=90000"]
    :exec-fn goldly.app.build/goldly-build
    :exec-args {:profile "compile2"
-               :config ["webly/config.edn" "goldly/config.edn" "goldly/docs-config.edn"
+               :config ["webly/config.edn" "goldly/config.edn"; "goldly/docs-config.edn"
                         "studio/config.edn"]}}
 
   ;; nb eval

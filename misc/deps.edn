@@ -1,0 +1,8 @@
+{:paths ["src"]
+ :deps
+ {org.clojure/algo.generic {:mvn/version "0.1.3"}
+ 
+
+  ; com.stuartsierra/frequencies {:mvn/version "0.1.0"}     ; percentile stats
+  ; medley/medley          {:mvn/version "1.3.0"}  ; lightweight pure functions that are "missing" from clojure.core.
+  }}
