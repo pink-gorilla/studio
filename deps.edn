@@ -5,7 +5,7 @@
  :deps {org.clojure/clojure    {:mvn/version "1.10.3"}
         org.pinkgorilla/goldly-docs {:mvn/version "0.4.523"}
         studio/dataset {:local/root "./dataset" :deps/manifest :deps}
-        ;studio/smile {:local/root "./smile" :deps/manifest :deps}
+        studio/smile {:local/root "./smile" :deps/manifest :deps}
         ;studio/arrow {:local/root "./arrow" :deps/manifest :deps}
         ;studio/misc {:local/root "./misc" :deps/manifest :deps}
         }
@@ -22,7 +22,7 @@
 
   ; RUN SERVICES (keep running)
   :docs-run
-  {:jvm-opts ["-Dmaven.wagon.rto=90000"]
+  {;:jvm-opts ["-Dmaven.wagon.rto=90000"]
    :exec-fn modular.system/start!
    :exec-args {:profile "jetty"
                :config ["webly/config.edn" "goldly/config.edn" ;"goldly/docs-config.edn"
@@ -42,6 +42,8 @@
   :nbeval {:exec-fn reval.task/nbeval
            :exec-args {:config "demo.edn"}}
 
+  :tree {:extra-deps {org.clojure/tools.deps.alpha {:mvn/version "0.14.1178"}}
+         :exec-fn clojure.tools.cli.api/tree}
 
 ;           
   }}

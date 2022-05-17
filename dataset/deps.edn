@@ -1,8 +1,27 @@
 {:paths ["src"]
  :deps
  {
-  ;scicloj/tablecloth {:mvn/version "6.076"} ; brings techml-dataset
-  ;com.taoensso/nippy {:mvn/version "2.14.0"}
+  ; the techml libs are here for debugging in case of dependency conflicts
+  ;cnuernber/dtype-next {:mvn/version "9.015"}
+  techascent/tech.resource {:mvn/version "5.05"}
+  techascent/tech.ml.dataset {:mvn/version "6.076"}
+  techascent/tech.config {:mvn/version "0.3.13"}
+  com.cnuernber/jarrow {:mvn/version "1.000"}
+  com.techascent/t-digest {:mvn/version "4.0-pre-release-1"}
+  techascent/tech.io {:mvn/version "4.09"}
+   com.taoensso/nippy {:mvn/version "3.1.1"}
+
+  #_scicloj/tablecloth #_{:mvn/version "6.076"
+                      :exclusions [org.clojure/core.specs.alpha
+                                   org.clojure/spec.alpha
+                                   insn/insn 
+                                   com.google.guava/listenablefuture
+                                   com.google.guava/guava
+                                   com.google.code.findbugs/jsr305
+                                   ]
+                      } ; brings techml-dataset
+
+  
   ;techascent/tech.io {:mvn/version "4.07"} 
  
   ;generateme/fastmath {:mvn/version "2.1.6"}
