@@ -17,7 +17,7 @@
   com.techascent/t-digest {:mvn/version "4.0-pre-release-1"}
   techascent/tech.io {:mvn/version "4.09"}
   com.taoensso/nippy {:mvn/version "3.1.1"}
- ;techascent/tech.io {:mvn/version "4.07"} 
+  techascent/tech.viz {:mvn/version "6.00-beta-16-2"}
   
   scicloj/tablecloth {:mvn/version "6.076"} ; brings techml-dataset
   generateme/fastmath {:mvn/version "2.1.6"}
