@@ -62,6 +62,10 @@
                {:kb "alt-shift-enter"     :handler [:notebook/evaluate-all] :desc "Evaluate all segments."}
                {:kb "ctrl-shift-enter" :handler [:notebook/evaluate-all]         :desc "Evaluate all segments"}
                {:kb "ctrl-enter" :handler [:repl/eval-expression]               :desc "Evaluate the highlighted segment"}]
+ 
+ :python {:python-executable "~/.conda/envs/pyclj/bin/python3.7"
+           :library-path "~/.conda/envs/pyclj/lib/libpython3.7m.dylib"}
+
 
  ;
  }

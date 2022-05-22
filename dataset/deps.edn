@@ -22,6 +22,10 @@
   scicloj/tablecloth {:mvn/version "6.076"} ; brings techml-dataset
   generateme/fastmath {:mvn/version "2.1.6"}
 
+  ;[techascent/tech.ml "2.0-beta-43"]
+  ;[techascent/tech.ml.dataset "2.0-beta-44"]
+  ;[org.pinkgorilla/tech.viz "0.5.5"]
+
  }
 
 }

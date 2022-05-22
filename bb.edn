@@ -1,0 +1,20 @@
+{:paths ["script"]
+ :tasks {:requires [guix]
+
+         ; helper tasks
+         sudo (guix/sudo *command-line-args*)
+         guix (guix/guix)
+
+         ; verbosity:
+         ; 0 means that no output is produced
+         ; 1 is for quiet output
+         ; 2 is similar to 1 but it additionally displays download URLs
+         ; 3 shows all the build log output on standard error.
+
+        ; install
+
+         install-python {:doc "installs python packages"
+                         :task (guix/package "python"
+                                             "--verbosity=1"
+                                             "--no-grafts")}}}
+
