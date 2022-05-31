@@ -3,26 +3,18 @@
          "target/webly" ; in case we build ourselves.
          ]
  :deps {org.clojure/clojure    {:mvn/version "1.10.3"}
-        org.pinkgorilla/goldly-docs {:mvn/version "0.4.523"}
+        org.pinkgorilla/goldly-docs {:mvn/version "0.4.552"}
         studio/dataset {:local/root "./dataset" :deps/manifest :deps}
         studio/smile {:local/root "./smile" :deps/manifest :deps}
         studio/svg {:local/root "./svg_clj" :deps/manifest :deps}
+        studio/python {:local/root "./python" :deps/manifest :deps}
         ;studio/arrow {:local/root "./arrow" :deps/manifest :deps}
         ;studio/misc {:local/root "./misc" :deps/manifest :deps}
         }
-        
+
 
  :aliases
- {:outdated
-  {:extra-deps {com.github.liquidz/antq {:mvn/version "RELEASE"}}
-   :main-opts ["-m"
-               "antq.core"]}
-  :cljfmt-fix
-  {:extra-deps {cljfmt/cljfmt {:mvn/version "0.8.0"}}
-   :main-opts ["-m" "cljfmt.main" "fix" "--indents" "cljfmt.edn"]}
-
-  ; RUN SERVICES (keep running)
-  :docs-run
+ {:docs-run ; RUN SERVICES (keep running)
   {;:jvm-opts ["-Dmaven.wagon.rto=90000"]
    :exec-fn modular.system/start!
    :exec-args {:profile "jetty"
@@ -30,8 +22,7 @@
                         "studio/config.edn"]
                :services "goldly/docs-services.edn"}}
 
-  ; BUILD BUNDLE (then exit)
-  :docs-build 
+  :docs-build ; BUILD BUNDLE (then exit)
   {:jvm-opts ["-Dmaven.wagon.rto=90000"]
    :exec-fn goldly.app.build/goldly-build
    :exec-args {:profile "compile2"

@@ -11,6 +11,9 @@
          ; 2 is similar to 1 but it additionally displays download URLs
          ; 3 shows all the build log output on standard error.
 
+         python-env {:doc "creates guix environment with clojure and python3"
+                     :task (shell "guix" "shell" "-m" "script/python.scm")}
+
         ; install
 
          install-python {:doc "installs python packages"

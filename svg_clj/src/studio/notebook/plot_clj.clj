@@ -39,7 +39,8 @@
     (rdm/save *ns* "item-plot" :png))
 
 ; show url
-  (rdm/url "item-plot.png")
+  (rdm/get-link-ns *ns* "item-plot.png")
+  
 
 
 
