@@ -1,0 +1,157 @@
+; saved on 2022-06-01 06:39:56
+{:content [{:out "",
+            :id :ab23fabe-b55d-4201-9627-39096bd35d9f,
+            :code "(ns studio.notebook.python-seaborn\n  (:require\n   [libpython-clj2.require :refer [require-python]]\n   [libpython-clj2.python :as py :refer [py. py.. py.-]]\n   [studio.python.maplot :refer [with-show]]))",
+            :ns "studio.notebook.python-seaborn",
+            :hiccup [:div.p-2.clj-nil [:p "nil"]]}
+           {:out "",
+            :id :3c4458ab-82e8-4942-aeed-b2f875880b32,
+            :code "(require-python '[seaborn :as sns])",
+            :ns "studio.notebook.python-seaborn",
+            :hiccup [:span
+                     {:style {:color "rgb(30, 30, 82)"}}
+                     ":ok"]}
+           {:out "",
+            :id :5f0af3d2-1492-4c7a-b263-06f8b71ee519,
+            :code "; seaborn: Really cool statistical plotting\n\n(require-python '[matplotlib.pyplot :as pyplot])",
+            :ns "studio.notebook.python-seaborn",
+            :hiccup [:span
+                     {:style {:color "rgb(30, 30, 82)"}}
+                     ":ok"]}
+           {:out "",
+            :id :d0067c81-9bd5-4816-acda-02e00879fef4,
+            :code "(sns/set)",
+            :ns "studio.notebook.python-seaborn",
+            :hiccup [:div.p-2.clj-nil [:p "nil"]]}
+           {:out "",
+            :id :657dc500-66f0-477f-8da6-bc0a9b890381,
+            :code "(def dots (sns/load_dataset \"dots\"))",
+            :ns "studio.notebook.python-seaborn",
+            :hiccup [:span
+                     {:style {:color "deeppink"}}
+                     "#'studio.notebook.python-seaborn/dots"]}
+           {:out "",
+            :id :a9a33ce5-f309-48e8-bd73-35c9a4be65dd,
+            :code "(py. dots head)",
+            :ns "studio.notebook.python-seaborn",
+            :hiccup [:div.border-solid.p-2
+                     [:p.text-red-300 ":pyobject"]
+                     [:span
+                      "  align choice  time  coherence  firing_rate\n0  dots     T1   -80        0.0    33.189967\n1  dots     T1   -80        3.2    31.691726\n2  dots     T1   -80        6.4    34.279840\n3  dots     T1   -80       12.8    32.631874\n4  dots     T1   -80       25.6    35.060487"]]}
+           {:out "",
+            :id :1b13c6ee-84a1-4c44-9d91-7aab4174d3db,
+            :code "(take 5 dots)",
+            :ns "studio.notebook.python-seaborn",
+            :hiccup [:span
+                     {:class "clj-lazy-seq"}
+                     [:span.font-bold.teal-700.mr-1 "("]
+                     [:span.items
+                      [:span
+                       {:style {:color "grey"}}
+                       "\"align\""]
+                      [:span " "]
+                      [:span
+                       {:style {:color "grey"}}
+                       "\"choice\""]
+                      [:span " "]
+                      [:span
+                       {:style {:color "grey"}}
+                       "\"time\""]
+                      [:span " "]
+                      [:span
+                       {:style {:color "grey"}}
+                       "\"coherence\""]
+                      [:span " "]
+                      [:span
+                       {:style {:color "grey"}}
+                       "\"firing_rate\""]]
+                     [:span.font-bold.teal-700.ml-1 ")"]]}
+           {:out "",
+            :id :10bb83e9-ad14-4312-badb-342af7358a4f,
+            :code "(with-show\n  (sns/relplot :x \"time\" :y \"firing_rate\" :col \"align\"\n               :hue \"choice\" :size \"coherence\" :style \"choice\"\n               :facet_kws {:sharex false} :kind \"line\"\n               :legend \"full\" :data dots))",
+            :ns "studio.notebook.python-seaborn",
+            :hiccup [:img
+                     {:src "/api/rdocument/file/studio.notebook.python-seaborn/878ff447-0c1c-4deb-a9f9-711fa57f4fcb.png",
+                      :width 1111,
+                      :height 500,
+                      :alt ""}]}
+           {:out "",
+            :id :e8c8ab40-56cd-4d7d-8570-53b2b4740066,
+            :code "(def fmri (sns/load_dataset \"fmri\"))",
+            :ns "studio.notebook.python-seaborn",
+            :hiccup [:span
+                     {:style {:color "deeppink"}}
+                     "#'studio.notebook.python-seaborn/fmri"]}
+           {:out "",
+            :id :a9aa60bc-3ace-4730-a29c-274d3ae8ac57,
+            :code "(with-show\n  (sns/relplot :x \"timepoint\" :y \"signal\" :col \"region\"\n               :hue \"event\" :style \"event\" :kind \"line\"\n               :data fmri))",
+            :ns "studio.notebook.python-seaborn",
+            :hiccup [:img
+                     {:src "/api/rdocument/file/studio.notebook.python-seaborn/0cb095d5-8b1a-4c3d-82d0-5afc8f1fc09b.png",
+                      :width 1088,
+                      :height 500,
+                      :alt ""}]}
+           {:out "",
+            :id :c67a4495-314a-4428-abce-467f31970e0e,
+            :code "(def tips (sns/load_dataset \"tips\"))",
+            :ns "studio.notebook.python-seaborn",
+            :hiccup [:span
+                     {:style {:color "deeppink"}}
+                     "#'studio.notebook.python-seaborn/tips"]}
+           {:out "",
+            :id :4df862da-f072-4a35-87cd-33650e45e0fb,
+            :code "(with-show\n  (sns/lmplot :x \"total_bill\" :y \"tip\" :col \"time\" :hue \"smoker\" :data tips))",
+            :ns "studio.notebook.python-seaborn",
+            :hiccup [:img
+                     {:src "/api/rdocument/file/studio.notebook.python-seaborn/b17fe288-c733-4a78-9800-f673e3187477.png",
+                      :width 1079,
+                      :height 500,
+                      :alt ""}]}
+           {:out "",
+            :id :7d9ff433-0107-4bb7-a199-638c2f161e92,
+            :code "(with-show\n  (sns/catplot :x \"day\" :y \"total_bill\" :hue \"smoker\" :kind \"swarm\" :data tips))",
+            :ns "studio.notebook.python-seaborn",
+            :hiccup [:img
+                     {:src "/api/rdocument/file/studio.notebook.python-seaborn/dd0431df-fc16-4a6c-8e35-7ff997421e04.png",
+                      :width 579,
+                      :height 500,
+                      :alt ""}]}
+           {:out "",
+            :id :d0d3796c-60ff-4477-9d53-793181b0dab0,
+            :code "(with-show\n  (sns/catplot :x \"day\" :y \"total_bill\" :hue \"smoker\" :kind \"bar\" :data tips))",
+            :ns "studio.notebook.python-seaborn",
+            :hiccup [:img
+                     {:src "/api/rdocument/file/studio.notebook.python-seaborn/18580e6a-1c91-418c-a5a4-3a19774f632c.png",
+                      :width 579,
+                      :height 500,
+                      :alt ""}]}
+           {:out "",
+            :id :543d9b4c-d258-4481-9883-b6945a27e7e2,
+            :code "(def iris (sns/load_dataset \"iris\"))",
+            :ns "studio.notebook.python-seaborn",
+            :hiccup [:span
+                     {:style {:color "deeppink"}}
+                     "#'studio.notebook.python-seaborn/iris"]}
+           {:out "",
+            :id :bf7987c4-8a6a-41b3-bbab-ef70c8abd842,
+            :code "(with-show\n  (sns/jointplot :x \"sepal_length\" :y \"petal_length\" :data iris))",
+            :ns "studio.notebook.python-seaborn",
+            :hiccup [:img
+                     {:src "/api/rdocument/file/studio.notebook.python-seaborn/2869d9c7-6e4c-4789-8087-803dfa98956d.png",
+                      :width 600,
+                      :height 600,
+                      :alt ""}]}
+           {:out "",
+            :id :6b3b04e5-3334-4b37-a1be-0a04c0ddee95,
+            :code "(with-show\n  (sns/pairplot :data iris :hue \"species\"))",
+            :ns "studio.notebook.python-seaborn",
+            :hiccup [:img
+                     {:src "/api/rdocument/file/studio.notebook.python-seaborn/54cf5d94-f586-404a-af46-f0d42d904d19.png",
+                      :width 1130,
+                      :height 1000,
+                      :alt ""}]}],
+ :meta {:id :2823feab-9f61-4734-9ac4-0c0c15e67321,
+        :eval-time "2022-06-01 06:39:56",
+        :ns "studio.notebook.python-seaborn",
+        :java "17.0.3",
+        :clojure "1.10.3"}}

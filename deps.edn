@@ -4,10 +4,12 @@
          ]
  :deps {org.clojure/clojure    {:mvn/version "1.10.3"}
         org.pinkgorilla/goldly-docs {:mvn/version "0.4.553"}
-        studio/dataset {:local/root "./dataset" :deps/manifest :deps}
-        studio/smile {:local/root "./smile" :deps/manifest :deps}
-        studio/svg {:local/root "./svg_clj" :deps/manifest :deps}
 
+        studio/dataset {:local/root "./dataset" :deps/manifest :deps}
+        studio/svg {:local/root "./svg_clj" :deps/manifest :deps}
+        studio/sciclojml {:local/root "./sciclojml" :deps/manifest :deps}
+
+        ; studio/smile {:local/root "./smile" :deps/manifest :deps}
         ;studio/arrow {:local/root "./arrow" :deps/manifest :deps}
         ;studio/misc {:local/root "./misc" :deps/manifest :deps}
         }
@@ -18,9 +20,17 @@
   {:exec-fn modular.system/start!
    :exec-args {:profile "jetty"
                :config ["webly/config.edn" "goldly/config.edn"
-                        ;"goldly/docs-config.edn"
                         "studio/config.edn"]
                :services "goldly/docs-services.edn"}}
+
+  :build ; BUILD BUNDLE (then exit)
+  {;:jvm-opts ["-Dmaven.wagon.rto=90000"]
+   :exec-fn goldly.app.build/goldly-build
+   :exec-args {:profile "compile2"}}
+
+  :nbeval ;; nb eval
+  {:exec-fn reval.task/nbeval
+   :exec-args {:config "studio/config.edn"}}
 
   :jdk-17
   {:jvm-opts ["--add-modules" "jdk.incubator.foreign"
@@ -28,17 +38,6 @@
 
   :python
   {:extra-deps {studio/python {:local/root "./python" :deps/manifest :deps}}}
-
-  :build ; BUILD BUNDLE (then exit)
-  {:jvm-opts ["-Dmaven.wagon.rto=90000"]
-   :exec-fn goldly.app.build/goldly-build
-   :exec-args {:profile "compile2"
-               :config ["webly/config.edn" "goldly/config.edn"
-                        "studio/config.edn"]}}
-
-  :nbeval ;; nb eval
-  {:exec-fn reval.task/nbeval
-   :exec-args {:config "studio/config.edn"}}
 
 ;           
   }}

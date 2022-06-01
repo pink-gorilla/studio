@@ -1,4 +1,5 @@
 {:name "python"
  ;run
- :autoload-clj-ns [goldly.python.service]
+ :autoload-cljs-dir ["studio/python_viz"]
+ :autoload-clj-ns [studio.python.service]
  }

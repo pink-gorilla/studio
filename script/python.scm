@@ -6,7 +6,6 @@
   ; https://github.com/UMCUGenetics/guix-additions/blob/master/umcu/packages/python.scm
   ; https://unix.stackexchange.com/questions/621269/use-a-python-projects-requirements-txt-as-input-to-a-guix-package-definition?rq=1
   "python"  
-  ;"python-2"
   ;   "python-wrapper"
   ; "python-cython"
   ;"python-future"
@@ -15,6 +14,7 @@
   "python-numpy" 
   "python-scipy" 
   "python-pandas"
+  "python-seaborn"
   ;"python-setuptools
   "python-yarl" ; for edgar
   "python-certifi"

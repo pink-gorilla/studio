@@ -1,0 +1,103 @@
+; saved on 2022-06-01 06:34:20
+{:content [{:out "",
+            :id :12583396-1edb-4a77-901c-de74b96c4f50,
+            :code "(ns studio.notebook.python-numpy\n  (:require\n   [libpython-clj2.require :refer [require-python]]\n   [libpython-clj2.python :as py :refer [py. py.. py.-]]\n   [studio.python.maplot :refer [with-show]]\n   ))",
+            :ns "studio.notebook.python-numpy",
+            :hiccup [:div.p-2.clj-nil [:p "nil"]]}
+           {:out "",
+            :id :a26da9ac-4aab-4921-9cf6-1808913d665e,
+            :code "(require-python '[matplotlib.pyplot :as pyplot])",
+            :ns "studio.notebook.python-numpy",
+            :hiccup [:span
+                     {:style {:color "rgb(30, 30, 82)"}}
+                     ":ok"]}
+           {:out "",
+            :id :f43c3de8-a460-4fa6-b3ef-fbf583ab8d75,
+            :code "(require-python '[numpy :as numpy])",
+            :ns "studio.notebook.python-numpy",
+            :hiccup [:span
+                     {:style {:color "rgb(30, 30, 82)"}}
+                     ":ok"]}
+           {:out "",
+            :id :7b0ac38f-882e-48f8-a8fd-3cb0f838708f,
+            :code "(def x (numpy/linspace 0 2 50))",
+            :ns "studio.notebook.python-numpy",
+            :hiccup [:span
+                     {:style {:color "deeppink"}}
+                     "#'studio.notebook.python-numpy/x"]}
+           {:out "",
+            :id :45caf0c3-c66f-4d10-aa85-9cf854e0778e,
+            :code "x",
+            :ns "studio.notebook.python-numpy",
+            :hiccup [:div.border-solid.p-2
+                     [:p.text-red-300 ":pyobject"]
+                     [:span
+                      "[0.         0.04081633 0.08163265 0.12244898 0.16326531 0.20408163\n 0.24489796 0.28571429 0.32653061 0.36734694 0.40816327 0.44897959\n 0.48979592 0.53061224 0.57142857 0.6122449  0.65306122 0.69387755\n 0.73469388 0.7755102  0.81632653 0.85714286 0.89795918 0.93877551\n 0.97959184 1.02040816 1.06122449 1.10204082 1.14285714 1.18367347\n 1.2244898  1.26530612 1.30612245 1.34693878 1.3877551  1.42857143\n 1.46938776 1.51020408 1.55102041 1.59183673 1.63265306 1.67346939\n 1.71428571 1.75510204 1.79591837 1.83673469 1.87755102 1.91836735\n 1.95918367 2.        ]"]]}
+           {:out "",
+            :id :5e7d1327-41cb-410a-bcd2-b9f08b622f03,
+            :code "(with-show (matplotlib.pyplot/plot \n            [[1 2 3 4 5] [1 2 3 4 10]]\n            :label \"linear\"))",
+            :ns "studio.notebook.python-numpy",
+            :hiccup [:img
+                     {:src "/api/rdocument/file/studio.notebook.python-numpy/b32a7fbd-3e75-4321-90eb-b31b9a6944f3.png",
+                      :width 640,
+                      :height 480,
+                      :alt ""}]}
+           {:out "",
+            :id :cf7881c9-a07f-4455-9da9-439c532f1976,
+            :code "(with-show\n  (pyplot/plot [x x] :label \"linear\")\n  (pyplot/plot [x (py. x \"__pow__\" 2)] :label \"quadratic\")\n  (pyplot/plot [x (py. x \"__pow__\" 3)] :label \"cubic\")\n  (pyplot/xlabel \"x label\")\n  (pyplot/ylabel \"y label\")\n  (pyplot/title \"Simple Plot\"))",
+            :ns "studio.notebook.python-numpy",
+            :hiccup [:img
+                     {:src "/api/rdocument/file/studio.notebook.python-numpy/4e59336e-2969-471c-888c-ff55f4f415d2.png",
+                      :width 640,
+                      :height 480,
+                      :alt ""}]}
+           {:out "",
+            :id :9307a767-6f55-46c0-aede-8ce78c2c759b,
+            :code "(let [x (numpy/arange 0 (* 3 numpy/pi) 0.1)\n      y-sin (numpy/sin x)\n      y-cos (numpy/cos x)]\n  (with-show\n    (pyplot/plot x y-sin)\n    (pyplot/plot x y-cos)\n    (pyplot/xlabel \"x axis label\")\n    (pyplot/ylabel \"y axis label\")\n    (pyplot/title \"Sine and Cosine\")\n    (pyplot/legend [\"Sine\" \"Cosine\"])))",
+            :ns "studio.notebook.python-numpy",
+            :hiccup [:img
+                     {:src "/api/rdocument/file/studio.notebook.python-numpy/15fdab40-466c-4f4d-896e-c087a7725865.png",
+                      :width 640,
+                      :height 480,
+                      :alt ""}]}
+           {:out "",
+            :id :5fa83f00-6266-436c-b652-a8fa9d4869eb,
+            :code "(let [x (numpy/arange 0 (* 3 numpy/pi) 0.1)\n      y-sin (numpy/sin x)\n      y-cos (numpy/cos x)]\n  (with-show\n      ;;; set up a subplot gird that has a height of 2 and width of 1\n      ;; and set the first such subplot as active\n    (pyplot/subplot 2 1 1)\n    (pyplot/plot x y-sin)\n    (pyplot/title \"Sine\")\n\n      ;;; set the second subplot as active and make the second plot\n    (pyplot/subplot 2 1 2)\n    (pyplot/plot x y-cos)\n    (pyplot/title \"Cosine\")))",
+            :ns "studio.notebook.python-numpy",
+            :hiccup [:img
+                     {:src "/api/rdocument/file/studio.notebook.python-numpy/fa1676b2-5eeb-453b-b373-081fe63e78b2.png",
+                      :width 640,
+                      :height 480,
+                      :alt ""}]}
+           {:out "",
+            :id :8a47e626-e338-46c9-9ffa-c61916cbb99c,
+            :code "(let [img (pyplot/imread \"resources/sample-data/cat.jpg\")\n      img-tinted (numpy/multiply img [1 0.95 0.9])]\n  (with-show\n    (pyplot/subplot 1 2 1)\n    (pyplot/imshow img)\n    (pyplot/subplot 1 2 2)\n    (pyplot/imshow (numpy/uint8 img-tinted))))",
+            :ns "studio.notebook.python-numpy",
+            :hiccup [:img
+                     {:src "/api/rdocument/file/studio.notebook.python-numpy/81eade59-4f07-46bf-b62a-d35855d154dc.png",
+                      :width 640,
+                      :height 480,
+                      :alt ""}]}
+           {:out "",
+            :id :f286cfae-ef0e-44b9-a3f1-2960d5f58abb,
+            :code "(let [x (numpy/arange 0 (* 3 numpy/pi) 0.1)\n      y (numpy/sin x)]\n  (with-show\n    (pyplot/plot x y)))",
+            :ns "studio.notebook.python-numpy",
+            :hiccup [:img
+                     {:src "/api/rdocument/file/studio.notebook.python-numpy/6df7b39f-791c-4590-8e12-541b2f55ab25.png",
+                      :width 640,
+                      :height 480,
+                      :alt ""}]}
+           {:out "",
+            :id :e46b588e-f73d-4afd-9630-e5f9b20e276a,
+            :code "(let [labels [\"Frogs\" \"Hogs\" \"Dogs\" \"Logs\"]\n      sizes [15 30 45 10]\n      explode [0 0.1 0 0]] ; only explode the 2nd slice (Hogs)\n  (with-show\n    (let [[fig1 ax1] (pyplot/subplots)]\n      (py. ax1 \"pie\" sizes :explode explode :labels labels :autopct \"%1.1f%%\"\n           :shadow true :startangle 90)\n      (py. ax1 \"axis\" \"equal\")) ;equal aspec ration ensures that pie is drawn as circle\n    ))",
+            :ns "studio.notebook.python-numpy",
+            :hiccup [:img
+                     {:src "/api/rdocument/file/studio.notebook.python-numpy/b551edf3-b8e8-4ba7-a207-39720fc4393c.png",
+                      :width 640,
+                      :height 480,
+                      :alt ""}]}],
+ :meta {:id :6b88b009-233b-456c-befb-c670714b8b10,
+        :eval-time "2022-06-01 06:34:20",
+        :ns "studio.notebook.python-numpy",
+        :java "17.0.3",
+        :clojure "1.10.3"}}

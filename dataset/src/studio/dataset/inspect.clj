@@ -1,8 +1,8 @@
 (ns studio.dataset.inspect
   (:require
    [tech.v3.dataset :as tds]
-   [tablecloth.api :as tc]
-   [tech.v3.dataset.print :refer [print-range]]))
+   [tech.v3.dataset.print :refer [print-range]]
+   [tablecloth.api :as tc]))
 
 (defn ds->map [ds]
   (into [] (tds/mapseq-reader ds)))

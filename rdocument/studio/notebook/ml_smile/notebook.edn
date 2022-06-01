@@ -1,0 +1,54 @@
+; saved on 2022-06-01 07:53:40
+{:content [{:out "..instrumented #'scicloj.metamorph.ml/model\n..instrumented #'scicloj.metamorph.ml/explain\n..instrumented #'scicloj.metamorph.ml/evaluate-pipelines\n..instrumented #'scicloj.metamorph.ml/train\n..instrumented #'scicloj.metamorph.ml/thaw-model\n..instrumented #'scicloj.metamorph.ml/default-loss-fn\n..instrumented #'scicloj.metamorph.ml/predict\nRegister model:  :smile.classification/discrete-naive-bayes\nRegister model:  :smile.classification/maxent-multinomial\nRegister model:  :smile.classification/maxent-binomial\nRegister model:  :smile.classification/sparse-logistic-regression\nRegister model:  :smile.classification/sparse-svm\nRegister model:  :smile.classification/svm\nRegister model:  :smile.classification/linear-discriminant-analysis\nRegister model:  :smile.classification/fld\nRegister model:  :smile.classification/random-forest\nRegister model:  :smile.classification/ada-boost\nRegister model:  :smile.classification/knn\nRegister model:  :smile.classification/decision-tree\nRegister model:  :smile.classification/gradient-tree-boost\nRegister model:  :smile.classification/regularized-discriminant-analysis\nRegister model:  :smile.classification/quadratic-discriminant-analysis\nRegister model:  :smile.classification/logistic-regression\nRegister model:  :smile.regression/ordinary-least-square\nRegister model:  :smile.regression/elastic-net\nRegister model:  :smile.regression/lasso\nRegister model:  :smile.regression/ridge\nRegister model:  :smile.regression/gradient-tree-boost\nRegister model:  :smile.regression/random-forest\nRegister model:  :fastmath/cluster\nRegister model:  :fastmath.cluster/spectral\nRegister model:  :fastmath.cluster/dbscan\nRegister model:  :fastmath.cluster/k-means\nRegister model:  :fastmath.cluster/mec\nRegister model:  :fastmath.cluster/clarans\nRegister model:  :fastmath.cluster/g-means\nRegister model:  :fastmath.cluster/lloyd\nRegister model:  :fastmath.cluster/x-means\nRegister model:  :fastmath.cluster/deterministic-annealing\nRegister model:  :fastmath.cluster/denclue\n..instrumented #'scicloj.metamorph.ml/model\n..instrumented #'scicloj.metamorph.ml/explain\n..instrumented #'scicloj.metamorph.ml/evaluate-pipelines\n..instrumented #'scicloj.metamorph.ml/train\n..instrumented #'scicloj.metamorph.ml/thaw-model\n..instrumented #'scicloj.metamorph.ml/default-loss-fn\n..instrumented #'scicloj.metamorph.ml/predict\n..instrumented #'scicloj.ml.smile.clustering/cluster\nRegister model:  :smile.projections\nRegister model:  :smile.projections/pca-cov\nRegister model:  :smile.projections/pca-cor\nRegister model:  :smile.projections/pca-prob\nRegister model:  :smile.projections/kpca\nRegister model:  :smile.projections/gha\nRegister model:  :smile.projections/random\n..instrumented #'scicloj.metamorph.ml/model\n..instrumented #'scicloj.metamorph.ml/explain\n..instrumented #'scicloj.metamorph.ml/evaluate-pipelines\n..instrumented #'scicloj.metamorph.ml/train\n..instrumented #'scicloj.metamorph.ml/thaw-model\n..instrumented #'scicloj.metamorph.ml/default-loss-fn\n..instrumented #'scicloj.metamorph.ml/predict\n..instrumented #'scicloj.ml.smile.clustering/cluster\n..instrumented #'scicloj.ml.smile.projections/reduce-dimensions\nRegister model:  :xgboost/regression\nRegister model:  :xgboost/classification\nRegister model:  :xgboost/logistic-binary-raw-classification\nRegister model:  :xgboost/linear-regression\nRegister model:  :xgboost/gpu-binary-logistic-raw-classification\nRegister model:  :xgboost/gpu-linear-regression\nRegister model:  :xgboost/count-poisson\nRegister model:  :xgboost/survival-cox\nRegister model:  :xgboost/gpu-logistic-regression\nRegister model:  :xgboost/tweedie-regression\nRegister model:  :xgboost/squared-error-regression\nRegister model:  :xgboost/multiclass-softprob\nRegister model:  :xgboost/logistic-binary-classification\nRegister model:  :xgboost/gamma-regression\nRegister model:  :xgboost/rank-map\nRegister model:  :xgboost/multiclass-softmax\nRegister model:  :xgboost/rank-pairwise\nRegister model:  :xgboost/gpu-binary-logistic-classification\nRegister model:  :xgboost/logistic-regression\nRegister model:  :xgboost/binary-hinge-loss\nRegister model:  :xgboost/rank-ndcg\nRegister model:  :smile.manifold/isomap\nRegister model:  :smile.manifold/laplacian\nRegister model:  :smile.manifold/lle\nRegister model:  :smile.manifold/tsne\nRegister model:  :smile.manifold/umap\n",
+            :id :cb473534-69d0-4c1c-bcdc-afb95c41f946,
+            :code "(ns studio.notebook.ml-smile\n  (:require \n    [scicloj.ml.core :as ml]\n    [scicloj.ml.metamorph :as mm]\n    [scicloj.ml.dataset :as ds]))",
+            :ns "studio.notebook.ml-smile",
+            :hiccup [:div.p-2.clj-nil [:p "nil"]]}
+           {:out "",
+            :id :2168af21-525c-4a31-9442-2107f8507e7e,
+            :code "(def titanic-train\n  (ds/dataset \"https://github.com/scicloj/metamorph-examples/raw/main/data/titanic/train.csv\" {:key-fn keyword :parser-fn :string}))",
+            :ns "studio.notebook.ml-smile",
+            :hiccup [:span
+                     {:style {:color "deeppink"}}
+                     "#'studio.notebook.ml-smile/titanic-train"]}
+           {:out "",
+            :id :305b2300-f9d2-421e-87e1-6ced01282301,
+            :code "(def titanic-test\n  (-> \"https://github.com/scicloj/metamorph-examples/raw/main/data/titanic/test.csv\"\n      (ds/dataset {:key-fn keyword :parser-fn :string})\n      (ds/add-column :Survived [\"\"] :cycle)))",
+            :ns "studio.notebook.ml-smile",
+            :hiccup [:span
+                     {:style {:color "deeppink"}}
+                     "#'studio.notebook.ml-smile/titanic-test"]}
+           {:out "",
+            :id :7d068c6d-295d-44fe-aeb8-e665338dfd8d,
+            :code "(def pipe-fn\n  (ml/pipeline\n   (mm/select-columns [:Survived :Pclass])\n   (mm/add-column :Survived (fn [ds] (map #(case % \"1\" \"yes\" \"0\" \"no\" nil \"\") (:Survived ds))))\n   (mm/categorical->number [:Survived :Pclass])\n   (mm/set-inference-target :Survived)\n   {:metamorph/id :model}\n   (mm/model {:model-type :smile.classification/logistic-regression})))",
+            :ns "studio.notebook.ml-smile",
+            :hiccup [:span
+                     {:style {:color "deeppink"}}
+                     "#'studio.notebook.ml-smile/pipe-fn"]}
+           {:out "",
+            :id :d474a4c7-9f46-4203-8082-665bab489c0e,
+            :code "(def trained-ctx\n  (pipe-fn {:metamorph/data titanic-train\n            :metamorph/mode :fit}))",
+            :ns "studio.notebook.ml-smile",
+            :hiccup [:span
+                     {:style {:color "deeppink"}}
+                     "#'studio.notebook.ml-smile/trained-ctx"]}
+           {:out "",
+            :id :697bc43f-b19b-47cb-9851-052e44cdf583,
+            :code "(def test-ctx\n  (pipe-fn\n   (assoc trained-ctx\n          :metamorph/data titanic-test\n          :metamorph/mode :transform)))",
+            :ns "studio.notebook.ml-smile",
+            :hiccup [:span
+                     {:style {:color "deeppink"}}
+                     "#'studio.notebook.ml-smile/test-ctx"]}
+           {:out "",
+            :id :e796155f-93fb-43b9-a4a7-c36ff03a86e4,
+            :code "(-> test-ctx :metamorph/data\n    (ds/column-values->categorical :Survived))",
+            :ns "studio.notebook.ml-smile",
+            :hiccup [:span.text-blue-500
+                     "techml column!"
+                     [user/text
+                      "#tech.v3.dataset.column<string>[418]\n:Survived\n[no, no, yes, no, no, no, no, yes, no, no, no, no, no, yes, no, yes, yes, no, no, no...]"]]}],
+ :meta {:id :9317475d-6d44-450d-8588-7aa7c0276d1a,
+        :eval-time "2022-06-01 07:53:40",
+        :ns "studio.notebook.ml-smile",
+        :java "17.0.3",
+        :clojure "1.10.3"}}
