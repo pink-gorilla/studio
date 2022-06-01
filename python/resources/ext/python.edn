@@ -1,1 +1,4 @@
-{:name "python"}
+{:name "python"
+ ;run
+ :autoload-clj-ns [goldly.python.service]
+ }

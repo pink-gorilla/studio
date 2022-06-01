@@ -1,0 +1,127 @@
+; saved on 2022-06-01 05:33:15
+{:content [{:out "",
+            :id :16177023-1dae-4516-9366-0780a7e3efb5,
+            :code "(ns studio.notebook.ds-correlation\n  (:require\n   [tech.v3.datatype.functional :as fun]\n   [fastmath.stats :as stats]\n   [studio.dataset.stats :refer [standardize rand-numbers]]))",
+            :ns "studio.notebook.ds-correlation",
+            :hiccup [:div.p-2.clj-nil [:p "nil"]]}
+           {:out "",
+            :id :9c36523b-2e2d-4e67-a996-2edf949fdc41,
+            :code "(let [n  100\n      xs (repeatedly n #(* 100 (rand)))\n      ys (map #(+ % (* 200 (rand))) xs)]\n  [(stats/covariance xs ys)\n   (stats/correlation xs ys)])",
+            :ns "studio.notebook.ds-correlation",
+            :hiccup [:span.text-green-500
+                     "persistent-vector"
+                     [user/text
+                      "[384.4365542636771 0.20970133814165492]\n"]]}
+           {:out "",
+            :id :5a9af5fa-7573-46e8-a306-8b7fd0273326,
+            :code "(let [n  100\n      xs (repeatedly n #(* 100 (rand)))\n      ys (map #(+ % (* 20 (rand))) xs)\n      zs (map #(+ % (* 20 (rand))) xs)]\n  (stats/covariance-matrix [xs ys zs]))",
+            :ns "studio.notebook.ds-correlation",
+            :hiccup [:span
+                     {:class "clj-lazy-seq"}
+                     [:span.font-bold.teal-700.mr-1 "("]
+                     [:span.items
+                      [:span.text-green-500
+                       "persistent-vector"
+                       [user/text
+                        "[746.270914766634 753.7348500726332 753.5557964575705]\n"]]
+                      [:span " "]
+                      [:span.text-green-500
+                       "persistent-vector"
+                       [user/text
+                        "[753.7348500726332 796.7600457748096 761.9534100620893]\n"]]
+                      [:span " "]
+                      [:span.text-green-500
+                       "persistent-vector"
+                       [user/text
+                        "[753.5557964575705 761.9534100620893 794.7893914246608]\n"]]]
+                     [:span.font-bold.teal-700.ml-1 ")"]]}
+           {:out "",
+            :id :3e1f066b-00cf-49b4-9433-4e61a9fd1cd5,
+            :code "(let [n  100\n      xs (repeatedly n #(* 100 (rand)))\n      ys (map #(+ % (* 20 (rand))) xs)\n      zs (map #(+ % (* 20 (rand))) xs)]\n  (->> [xs ys zs]\n       (map standardize)\n       stats/covariance-matrix))",
+            :ns "studio.notebook.ds-correlation",
+            :hiccup [:span
+                     {:class "clj-lazy-seq"}
+                     [:span.font-bold.teal-700.mr-1 "("]
+                     [:span.items
+                      [:span.text-green-500
+                       "persistent-vector"
+                       [user/text
+                        "[1.0000000000000002 0.9787672989363525 0.9793718420712901]\n"]]
+                      [:span " "]
+                      [:span.text-green-500
+                       "persistent-vector"
+                       [user/text
+                        "[0.9787672989363525 1.0 0.9554403450369174]\n"]]
+                      [:span " "]
+                      [:span.text-green-500
+                       "persistent-vector"
+                       [user/text
+                        "[0.9793718420712901 0.9554403450369174 0.9999999999999996]\n"]]]
+                     [:span.font-bold.teal-700.ml-1 ")"]]}
+           {:out "",
+            :id :e11487c5-140e-4eee-ae06-a33e758593e8,
+            :code "(let [n  1000\n      xs (repeatedly n #(* 100 (rand)))\n      ys (map #(+ % (* 20 (rand))) xs)\n      zs (map #(+ %1\n                  (- %2)\n                  (* 20 (rand)))\n              xs\n              ys)]\n  (->> [xs ys zs]\n       (map standardize)\n       stats/covariance-matrix))",
+            :ns "studio.notebook.ds-correlation",
+            :hiccup [:span
+                     {:class "clj-lazy-seq"}
+                     [:span.font-bold.teal-700.mr-1 "("]
+                     [:span.items
+                      [:span.text-green-500
+                       "persistent-vector"
+                       [user/text
+                        "[0.9999999999999996 0.9811375633818498 0.027035476598748266]\n"]]
+                      [:span " "]
+                      [:span.text-green-500
+                       "persistent-vector"
+                       [user/text
+                        "[0.9811375633818498 0.9999999999999983 -0.10274112820859996]\n"]]
+                      [:span " "]
+                      [:span.text-green-500
+                       "persistent-vector"
+                       [user/text
+                        "[0.027035476598748266\n -0.10274112820859996\n 0.9999999999999992]\n"]]]
+                     [:span.font-bold.teal-700.ml-1 ")"]]}
+           {:out "",
+            :id :b006e955-b35d-4c64-9e16-0540e2d12a72,
+            :code "(let [n  1000\n      xs (-> (rand-numbers n)\n             (fun/* 100))\n      ys (-> xs\n             (fun/* 20 (rand-numbers n)))\n      zs (-> xs\n             (fun/- ys)\n             (fun/+ (fun/* 20 (rand-numbers n))))]\n  (->> [xs ys zs]\n       (map standardize)\n       stats/covariance-matrix))",
+            :ns "studio.notebook.ds-correlation",
+            :hiccup [:span
+                     {:class "clj-lazy-seq"}
+                     [:span.font-bold.teal-700.mr-1 "("]
+                     [:span.items
+                      [:span.text-green-500
+                       "persistent-vector"
+                       [user/text
+                        "[0.999999999999999 0.6449746618951638 -0.6044159245866403]\n"]]
+                      [:span " "]
+                      [:span.text-green-500
+                       "persistent-vector"
+                       [user/text
+                        "[0.6449746618951638 1.0 -0.9985663707365193]\n"]]
+                      [:span " "]
+                      [:span.text-green-500
+                       "persistent-vector"
+                       [user/text
+                        "[-0.6044159245866403 -0.9985663707365193 1.0000000000000004]\n"]]]
+                     [:span.font-bold.teal-700.ml-1 ")"]]}
+           {:out "",
+            :id :67ae453e-4c91-46aa-b64c-7e55dce72bea,
+            :code "(fun/quartiles (range 1000))",
+            :ns "studio.notebook.ds-correlation",
+            :hiccup [:div.border-solid.p-2
+                     [:p.text-red-300
+                      "class tech.v3.datatype.base$random_access$reify__39196"]
+                     [:span
+                      "[0.0 249.25 499.5 749.75 999.0]"]]}
+           {:out "",
+            :id :42925d83-6f2f-4d0d-af23-5f9050915eca,
+            :code "(fun/quartile-1 (range 1000))",
+            :ns "studio.notebook.ds-correlation",
+            :hiccup [:span
+                     {:style {:color "darkgreen"}}
+                     "249.25"]}],
+ :meta {:id :f45ac02d-4776-4be7-aa7c-ba3fd3a1c006,
+        :eval-time "2022-06-01 05:33:15",
+        :ns "studio.notebook.ds-correlation",
+        :java "17.0.3",
+        :clojure "1.10.3"}}

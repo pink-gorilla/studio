@@ -19,6 +19,5 @@ karma.conf.js
 shadow-cljs.edn
 goldly_bindings_generated.cljs
 .webly
-/rdocument
 .clj-kondo
 

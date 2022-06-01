@@ -4,7 +4,7 @@
    [libpython-clj.require :refer [require-python]]
    [panthera.panthera :as pt]
    [pinkgorilla.python.core :refer [py-initialize!]]
-   [pinkgorilla.python.plot :refer [with-show]]))
+   [goldly.python2 :refer [with-show]]))
 
 ;;; # Introducing **panthera** data structures
 

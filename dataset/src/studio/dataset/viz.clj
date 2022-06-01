@@ -2,6 +2,11 @@
   (:require
    [tech.v3.dataset :as tds]))
 
+(defn show-vega [vega-spec]
+  ^:R
+ ['ui.vega/vega vega-spec])
+
+
 (defn ds->table [ds]
   (let [;ds-safe (dissoc ds :date)
         ds-safe ds

@@ -1,15 +1,23 @@
-(ns pinkgorilla.python.core
+(ns goldly.python
   (:require
+   [taoensso.timbre :refer [info]]
+   [clojure.string :refer [trim]]
+   [clojure.java.shell :refer [sh]]
    [clojure.datafy :refer [datafy]]
-   [libpython-clj.python :as py]
-   [pinkgorilla.notebook-app.system]))
+   [modular.config :refer [get-in-config]]
+   [libpython-clj2.python :as py]))
+ 
+ (defn python3-path []
+   (-> (sh "which" "python3")
+       :out
+       trim))
 
 (defn py-initialize! []
-  (let [config (pinkgorilla.notebook-app.system/get-setting [:python])]
-    (println "python config: " config)
+  (let [python-config (get-in-config [:python])]
+    (info "python config: " python-config)
     (py/initialize!
-     :python-executable (:python-executable config)
-     :library-path (:library-path config))))
+     :python-executable (python3-path) ;(:python-executable python-config)
+     :library-path (:library-path python-config))))
 
 (defn- convert
   "extracts useful information from an item of a python namespace

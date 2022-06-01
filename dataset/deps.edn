@@ -1,4 +1,6 @@
-{:paths ["src"]
+{:paths ["src" 
+         "resources" ; hiccup converters
+         ]
  :deps
  {
   ; resolve techml-dtype-next shadow-cljs dep conflicts:

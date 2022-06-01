@@ -1,0 +1,28 @@
+; saved on 2022-06-01 03:44:09
+{:content [{:out "",
+            :id :f1921ea1-b9bc-4ac8-ba26-4cb0274d2f89,
+            :code "(ns studio.notebook.ds-inspect\n  (:require\n   [tech.v3.dataset :as tds]\n   [tablecloth.api :as tc]\n   [studio.dataset.inspect :refer [has-col]]))",
+            :ns "studio.notebook.ds-inspect",
+            :hiccup [:div.p-2.clj-nil [:p "nil"]]}
+           {:out "",
+            :id :644f7523-e47a-426e-be17-fade756f9a5e,
+            :code "(def d \n  (tc/dataset {:close [1 2 3]\n               :adj-close [5 7 8]}))",
+            :ns "studio.notebook.ds-inspect",
+            :hiccup [:span
+                     {:style {:color "deeppink"}}
+                     "#'studio.notebook.ds-inspect/d"]}
+           {:out "",
+            :id :8e7fc4f0-10ed-4a73-9dd1-647babccc144,
+            :code "(has-col d :x)",
+            :ns "studio.notebook.ds-inspect",
+            :hiccup [:div.p-2.clj-nil [:p "nil"]]}
+           {:out "",
+            :id :0a6231f1-790d-4c4d-b036-c26aee02d436,
+            :code "(has-col d :close)",
+            :ns "studio.notebook.ds-inspect",
+            :hiccup [:span {:class "clj-boolean"} "true"]}],
+ :meta {:id :1f4a4572-b7d9-4c04-aab9-19dc86c1bba7,
+        :eval-time "2022-06-01 03:44:09",
+        :ns "studio.notebook.ds-inspect",
+        :java "17.0.3",
+        :clojure "1.10.3"}}

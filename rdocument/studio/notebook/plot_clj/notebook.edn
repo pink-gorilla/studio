@@ -1,0 +1,84 @@
+; saved on 2022-06-01 05:39:32
+{:content [{:out "",
+            :id :1ecd708a-03f8-497d-bc63-8b17cc005214,
+            :code "(ns studio.notebook.plot-clj\n  (:require\n   [cljplot.core :as cljplotl]\n   [cljplot.render :as r]\n   [cljplot.build :as b]\n   [cljplot.common :as cpc]\n   [reval.ui :refer [img]]\n   [reval.document.manager :as rdm]))",
+            :ns "studio.notebook.plot-clj",
+            :hiccup [:div.p-2.clj-nil [:p "nil"]]}
+           {:out "",
+            :id :27a5d03b-9442-45af-8890-0e3d4b123482,
+            :code "(defn vega-clj [data]\n  (-> (b/series\n       [:grid nil {:x nil}]\n       [:stack-vertical [:bar data {:padding-out 0.1}]])\n      (b/preprocess-series)\n      (b/update-scale :x :fmt name)\n      (b/add-axes :bottom)\n      (b/add-axes :left)\n      (b/add-label :bottom \"a\")\n      (b/add-label :left \"b\")\n      (r/render-lattice {:width 400 :height 400})\n      ;(save \"bar.jpg\")\n      ;(show)\n      :buffer))",
+            :ns "studio.notebook.plot-clj",
+            :hiccup [:span
+                     {:style {:color "deeppink"}}
+                     "#'studio.notebook.plot-clj/vega-clj"]}
+           {:out "",
+            :id :a19228f6-834b-46fd-b527-e2cc25caa20d,
+            :code "(defn vega-clj-img [data]\n  (img (vega-clj data)))",
+            :ns "studio.notebook.plot-clj",
+            :hiccup [:span
+                     {:style {:color "deeppink"}}
+                     "#'studio.notebook.plot-clj/vega-clj-img"]}
+           {:out "",
+            :id :37c39d6b-8555-4555-9f08-68ef523e9cf5,
+            :code "(-> {:A 10 :B 55 :C 43 :D 91 :E 81 :F 53 :G 19 :H 87 :I 52}\n         vega-clj-img)",
+            :ns "studio.notebook.plot-clj",
+            :hiccup [:img
+                     {:src "/api/rdocument/file/studio.notebook.plot-clj/abb7d136-993d-43e7-8aec-647ba5b5de40.png",
+                      :width 400,
+                      :height 400,
+                      :alt ""}]}
+           {:out "",
+            :id :ba44b1b8-73ae-43ee-bf80-349a43d979ca,
+            :code "(-> {:A -10 :B 55 :C 43 :D 91 :E 81 :F 53 :G 19 :H 87 :I 52}\n         vega-clj-img)",
+            :ns "studio.notebook.plot-clj",
+            :hiccup [:img
+                     {:src "/api/rdocument/file/studio.notebook.plot-clj/c2edfbcf-3863-44f2-866b-977fb7681b66.png",
+                      :width 400,
+                      :height 400,
+                      :alt ""}]}
+           {:out "",
+            :id :2b6415f4-fd0e-4adc-adc6-6e8e3c482f89,
+            :code "(-> {:A -20 :B 55 :C 43 :D 91 :E 81 :F 53 :G 19 :H 87 :I 52}\n vega-clj-img)",
+            :ns "studio.notebook.plot-clj",
+            :hiccup [:img
+                     {:src "/api/rdocument/file/studio.notebook.plot-clj/2751dd49-85a6-4049-a235-52c44d3d5f28.png",
+                      :width 400,
+                      :height 400,
+                      :alt ""}]}
+           {:out "",
+            :id :3930a287-cfbc-41b7-a6aa-e81b9e1c0fd3,
+            :code "; vega-clj works with sorted map too\n\n(def data2 (sorted-map :A 28 :B 55 :C 43 :D 91 :E 81 :F 53 :G 19 :H 87 :I 52))",
+            :ns "studio.notebook.plot-clj",
+            :hiccup [:span
+                     {:style {:color "deeppink"}}
+                     "#'studio.notebook.plot-clj/data2"]}
+           {:out "",
+            :id :34d7c4b8-cd48-4182-b5e7-a12eed8ec56c,
+            :code "(vega-clj-img data2)",
+            :ns "studio.notebook.plot-clj",
+            :hiccup [:img
+                     {:src "/api/rdocument/file/studio.notebook.plot-clj/5343620e-9d49-4cfc-98c8-1ea108a49950.png",
+                      :width 400,
+                      :height 400,
+                      :alt ""}]}
+           {:out "[32m2022-06-01T03:39:32.031Z nuc27 INFO [reval.document.manager:70] - saving:  rdocument/studio/notebook/plot_clj/item-plot.png[0m\n",
+            :id :db3eb29d-551d-4369-9538-f6b9b909fc4b,
+            :code "; save plot \n\n(-> {:A 28 :B 55 :C 43 :D 91 :E 81 :F 53 :G 19 :H 87 :I 52}\n     vega-clj\n    (rdm/save *ns* \"item-plot\" :png))",
+            :ns "studio.notebook.plot-clj",
+            :hiccup [:div.border-solid.p-2
+                     [:p.text-red-300
+                      "class java.awt.image.BufferedImage"]
+                     [:span
+                      "#object[java.awt.image.BufferedImage 0x4c72b968 \"BufferedImage@4c72b968: type = 2 DirectColorModel: rmask=ff0000 gmask=ff00 bmask=ff amask=ff000000 IntegerInterleavedRaster: width = 400 height = 400 #Bands = 4 xOff = 0 yOff = 0 dataOffset[0] 0\"]"]]}
+           {:out "",
+            :id :df275b75-5b6d-4e2a-8fe6-47f115b3ae67,
+            :code "; show url\n\n(rdm/get-link-ns *ns* \"item-plot.png\")",
+            :ns "studio.notebook.plot-clj",
+            :hiccup [:span
+                     {:style {:color "grey"}}
+                     "\"/api/rdocument/file/studio.notebook.plot-clj/item-plot.png\""]}],
+ :meta {:id :99a588ba-6257-43ce-80ab-a1827ba570db,
+        :eval-time "2022-06-01 05:39:32",
+        :ns "studio.notebook.plot-clj",
+        :java "17.0.3",
+        :clojure "1.10.3"}}

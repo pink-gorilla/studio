@@ -1,4 +1,4 @@
-(ns viz.python
+(ns goldly.python
   (:require
    ;[clojure.string :as str]
    [string :as str]))

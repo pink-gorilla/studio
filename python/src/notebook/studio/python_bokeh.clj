@@ -5,7 +5,7 @@
    [libpython-clj.require :refer [require-python]]
    [libpython-clj.python :as py :refer [py. py.. py.- att-type-map ->python ->jvm]]
    [pinkgorilla.python.core :refer [py-initialize!]]
-   [pinkgorilla.python.plot :refer [with-show]]))
+   [goldly.python2 :refer [with-show]]))
 
 
 ;;; # Python Seaborn

@@ -3,39 +3,42 @@
          "target/webly" ; in case we build ourselves.
          ]
  :deps {org.clojure/clojure    {:mvn/version "1.10.3"}
-        org.pinkgorilla/goldly-docs {:mvn/version "0.4.552"}
+        org.pinkgorilla/goldly-docs {:mvn/version "0.4.553"}
         studio/dataset {:local/root "./dataset" :deps/manifest :deps}
         studio/smile {:local/root "./smile" :deps/manifest :deps}
         studio/svg {:local/root "./svg_clj" :deps/manifest :deps}
-        studio/python {:local/root "./python" :deps/manifest :deps}
+
         ;studio/arrow {:local/root "./arrow" :deps/manifest :deps}
         ;studio/misc {:local/root "./misc" :deps/manifest :deps}
         }
 
 
  :aliases
- {:docs-run ; RUN SERVICES (keep running)
-  {;:jvm-opts ["-Dmaven.wagon.rto=90000"]
-   :exec-fn modular.system/start!
+ {:docs ; RUN SERVICES (keep running)
+  {:exec-fn modular.system/start!
    :exec-args {:profile "jetty"
-               :config ["webly/config.edn" "goldly/config.edn" ;"goldly/docs-config.edn"
+               :config ["webly/config.edn" "goldly/config.edn"
+                        ;"goldly/docs-config.edn"
                         "studio/config.edn"]
                :services "goldly/docs-services.edn"}}
 
-  :docs-build ; BUILD BUNDLE (then exit)
+  :jdk-17
+  {:jvm-opts ["--add-modules" "jdk.incubator.foreign"
+              "--enable-native-access=ALL-UNNAMED"]}
+
+  :python
+  {:extra-deps {studio/python {:local/root "./python" :deps/manifest :deps}}}
+
+  :build ; BUILD BUNDLE (then exit)
   {:jvm-opts ["-Dmaven.wagon.rto=90000"]
    :exec-fn goldly.app.build/goldly-build
    :exec-args {:profile "compile2"
-               :config ["webly/config.edn" "goldly/config.edn"; "goldly/docs-config.edn"
+               :config ["webly/config.edn" "goldly/config.edn"
                         "studio/config.edn"]}}
 
-  ;; nb eval
-
-  :nbeval {:exec-fn reval.task/nbeval
-           :exec-args {:config "demo.edn"}}
-
-  :tree {:extra-deps {org.clojure/tools.deps.alpha {:mvn/version "0.14.1178"}}
-         :exec-fn clojure.tools.cli.api/tree}
+  :nbeval ;; nb eval
+  {:exec-fn reval.task/nbeval
+   :exec-args {:config "studio/config.edn"}}
 
 ;           
   }}

@@ -1,4 +1,4 @@
-(ns pinkgorilla.python.plot
+(ns goldly.python2
   (:require
    [clojure.java.io :refer [as-file #_file]]
    [libpython-clj.require :refer [require-python]]

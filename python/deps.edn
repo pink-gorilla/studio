@@ -1,4 +1,4 @@
-{:paths ["src"]
+{:paths ["src" "resources"]
  :deps
  {clj-python/libpython-clj {:mvn/version "2.018"}
   net.mikera/core.matrix {:mvn/version "0.62.0"}

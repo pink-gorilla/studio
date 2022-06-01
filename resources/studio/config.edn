@@ -15,7 +15,7 @@
           ; runtime
           :autoload-cljs-dir  []
           :watch-cljs-dir []
-          :routes {:app {"" :goldly/no-page
+          :routes {:app {"" :studio/main
                          "devtools/scratchpad" :scratchpad
                          "devtools/viewer" :viewer
                          "devtools/repl" :repl
@@ -62,10 +62,11 @@
                {:kb "alt-shift-enter"     :handler [:notebook/evaluate-all] :desc "Evaluate all segments."}
                {:kb "ctrl-shift-enter" :handler [:notebook/evaluate-all]         :desc "Evaluate all segments"}
                {:kb "ctrl-enter" :handler [:repl/eval-expression]               :desc "Evaluate the highlighted segment"}]
- 
- :python {:python-executable "~/.conda/envs/pyclj/bin/python3.7"
-           :library-path "~/.conda/envs/pyclj/lib/libpython3.7m.dylib"}
 
+ :python {:python-executable "~/.conda/envs/pyclj/bin/python3.7"
+          :library-path "~/.conda/envs/pyclj/lib/libpython3.7m.dylib"}
+
+ :webly/web-server {:port 8081}
 
  ;
  }

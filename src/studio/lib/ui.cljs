@@ -1,6 +1,6 @@
 (ns studio.lib.ui
   (:require
-   [user :as user]
+   [goldly.page :as page]
    [site]
    [layout]))
 
@@ -28,12 +28,12 @@
             {:text "dev-tools"  :dispatch [:bidi/goto :devtools]}
             {:text "feedback" :link "https://github.com/pink-gorilla/studio/issues" :special? true}]}])
 
-(defn add-page [page name]
+(defn add-page-themed [page name]
   (let [wrapped-page (fn [route]
                        [layout/header-main  ; .w-screen.h-screen
                         [site-header]
                         [page route]])]
-    (user/add-page wrapped-page name)))
+    (page/add wrapped-page name)))
 
 
 

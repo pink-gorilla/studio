@@ -1,0 +1,21 @@
+; saved on 2022-06-01 04:00:58
+{:content [{:out "",
+            :id :5e02d890-d377-4b54-8d94-f085c0502a23,
+            :code "(ns studio.notebook.hello)",
+            :ns "studio.notebook.hello",
+            :hiccup [:div.p-2.clj-nil [:p "nil"]]}
+           {:out "welcome to goldly studio\n",
+            :id :8a6a2d6d-d990-454b-b37b-741df3ba0ae0,
+            :code "(println \"welcome to goldly studio\")",
+            :ns "studio.notebook.hello",
+            :hiccup [:div.p-2.clj-nil [:p "nil"]]}
+           {:out "",
+            :id :80609e1c-7907-4863-8e9d-f4e9960614a5,
+            :code "(+ 7 7)",
+            :ns "studio.notebook.hello",
+            :hiccup [:span {:style {:color "blue"}} "14"]}],
+ :meta {:id :e1ce6a48-f649-44a3-86f5-c9294028bd75,
+        :eval-time "2022-06-01 04:00:58",
+        :ns "studio.notebook.hello",
+        :java "17.0.3",
+        :clojure "1.10.3"}}

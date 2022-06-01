@@ -1,8 +1,10 @@
-(ns studio.notebook.ds-viz-vega
+(ns studio.notebook.ds-vega
   (:require
    [tech.v3.dataset :as tds]
    [tech.v3.datatype.datetime.operations :as dtype-dt-ops]
-   [tech.viz.vega :as vega]))
+   [tech.viz.vega :as vega]
+   [studio.dataset.viz :refer [show-vega]]
+   ))
 
 (defn stock-plot []
   (as-> (tds/->dataset "https://vega.github.io/vega/data/stocks.csv") ds
@@ -21,17 +23,6 @@
     ))
 ;; generate plot-image, and show it in browser
 
-^{:render-as :p/vega}
 (-> (stock-plot)
-    (with-meta {:render-as :p/vega}))
+    (show-vega))
 
-(comment
-
-  ;(save (stock-plot) "vega-spec" :edn) ; save in :edn format creates a HUMAN READABLE edn file!
-
-; show url (printed to console)
-; the link can be opened in the browser (it will save it to disk immediately)
- ; (url "vega-spec.edn")
-
-;  
-  )

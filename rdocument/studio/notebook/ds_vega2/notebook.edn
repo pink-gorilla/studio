@@ -1,0 +1,4436 @@
+; saved on 2022-06-01 05:39:52
+{:content [{:out "",
+            :id :c8dee0c6-d8eb-4023-9edc-e964da7d7c3f,
+            :code "(ns studio.notebook.ds-vega2\n  (:require\n   [tech.v3.dataset :as ds]\n   [tech.v3.datatype.datetime.operations :as dtype-dt-ops]\n   [tech.v3.dataset.math :refer [interpolate-loess]]\n   [tech.viz.vega :as vega]\n   [studio.dataset.viz :refer [show-vega]]))",
+            :ns "studio.notebook.ds-vega2",
+            :hiccup [:div.p-2.clj-nil [:p "nil"]]}
+           {:out "",
+            :id :29cd5667-aae5-46c6-9859-5b32790b0700,
+            :code "(show-vega\n  \"https://raw.githubusercontent.com/vega/vega/master/docs/examples/bar-chart.vg.json\")",
+            :ns "studio.notebook.ds-vega2",
+            :hiccup ^{:R true}
+                    [ui.vega/vega
+                     "https://raw.githubusercontent.com/vega/vega/master/docs/examples/bar-chart.vg.json"]}
+           {:out "",
+            :id :f6bb0595-d26d-4ebd-baeb-ff0e624f3c83,
+            :code "(-> (vega/scatterplot [{:a 1 :b 2} {:a 2 :b 3}] :a :b)\n   (show-vega))",
+            :ns "studio.notebook.ds-vega2",
+            :hiccup ^{:R true}
+                    [ui.vega/vega
+                     {:$schema "https://vega.github.io/schema/vega/v5.json",
+                      :autosize {:type "fit",
+                                 :resize true,
+                                 :contains "padding"},
+                      :width 800,
+                      :height 450,
+                      :axes [{:scale "x",
+                              :grid true,
+                              :orient "bottom",
+                              :title :a,
+                              :domain false}
+                             {:scale "y",
+                              :grid true,
+                              :orient "left",
+                              :title :b,
+                              :domain false}],
+                      :scales ({:zero false,
+                                :name "x",
+                                :type "linear",
+                                :round true,
+                                :nice true,
+                                :domain {:data "source",
+                                         :field :a},
+                                :range "width"}
+                               {:zero false,
+                                :name "y",
+                                :type "linear",
+                                :round true,
+                                :nice true,
+                                :domain {:data "source",
+                                         :field :b},
+                                :range "height"}),
+                      :marks [{:encode {:update {:fill {:value "#222"},
+                                                 :stroke {:value "#222"},
+                                                 :opacity {:value 0.5},
+                                                 :shape {:value "circle"},
+                                                 :x {:field :a,
+                                                     :scale "x"},
+                                                 :y {:field :b,
+                                                     :scale "y"}}},
+                               :from {:data "source"},
+                               :type "symbol"}],
+                      :data [{:name "source",
+                              :values [{:a 1, :b 2}
+                                       {:a 2, :b 3}]}]}]}
+           {:out "",
+            :id :163f0b97-83d8-4839-a358-33b7bcded212,
+            :code "(def csv-data (ds/->dataset \"https://github.com/techascent/tech.ml.dataset/raw/master/test/data/stocks.csv\"))",
+            :ns "studio.notebook.ds-vega2",
+            :hiccup [:span
+                     {:style {:color "deeppink"}}
+                     "#'studio.notebook.ds-vega2/csv-data"]}
+           {:out "",
+            :id :3d5161f3-0622-4a30-8c8e-e4030e4b5c2c,
+            :code "(ds/head csv-data)",
+            :ns "studio.notebook.ds-vega2",
+            :hiccup [:span.text-blue-500
+                     "techml dataset "
+                     [user/text
+                      "https://github.com/techascent/tech.ml.dataset/raw/master/test/data/stocks.csv [5 3]:\n\n| symbol |       date | price |\n|--------|------------|------:|\n|   MSFT | 2000-01-01 | 39.81 |\n|   MSFT | 2000-02-01 | 36.35 |\n|   MSFT | 2000-03-01 | 43.22 |\n|   MSFT | 2000-04-01 | 28.37 |\n|   MSFT | 2000-05-01 | 25.45 |\n"]]}
+           {:out "",
+            :id :2d36461f-f092-4517-be0b-0e9255d1ec7b,
+            :code "(def d \n   (ds/->dataset \"https://fred.stlouisfed.org/graph/fredgraph.csv?bgcolor=%23e1e9f0&chart_type=line&drp=0&fo=open%20sans&graph_bgcolor=%23ffffff&height=450&mode=fred&recession_bars=on&txtcolor=%23444444&ts=12&tts=12&width=1168&nt=0&thu=0&trc=0&show_legend=yes&show_axis_titles=yes&show_tooltip=yes&id=UEMPMED&scale=left&cosd=1967-07-01&coed=2020-03-01&line_color=%234572a7&link_values=false&line_style=solid&mark_type=none&mw=3&lw=2&ost=-99999&oet=99999&mma=0&fml=a&fq=Monthly&fam=avg&fgst=lin&fgsnd=2009-06-01&line_index=1&transformation=lin&vintage_date=2020-04-17&revision_date=2020-04-17&nd=1967-07-01\"\n                 {;:header-row? false \n                  :file-type :csv}\n                 ))",
+            :ns "studio.notebook.ds-vega2",
+            :hiccup [:span
+                     {:style {:color "deeppink"}}
+                     "#'studio.notebook.ds-vega2/d"]}
+           {:out "",
+            :id :8370f14d-33a8-44fb-ae84-671b01a281ca,
+            :code "d",
+            :ns "studio.notebook.ds-vega2",
+            :hiccup [:span.text-blue-500
+                     "techml dataset "
+                     [user/text
+                      "https://fred.stlouisfed.org/graph/fredgraph.csv?bgcolor=%23e1e9f0&chart_type=line&drp=0&fo=open%20sans&graph_bgcolor=%23ffffff&height=450&mode=fred&recession_bars=on&txtcolor=%23444444&ts=12&tts=12&width=1168&nt=0&thu=0&trc=0&show_legend=yes&show_axis_titles=yes&show_tooltip=yes&id=UEMPMED&scale=left&cosd=1967-07-01&coed=2020-03-01&line_color=%234572a7&link_values=false&line_style=solid&mark_type=none&mw=3&lw=2&ost=-99999&oet=99999&mma=0&fml=a&fq=Monthly&fam=avg&fgst=lin&fgsnd=2009-06-01&line_index=1&transformation=lin&vintage_date=2020-04-17&revision_date=2020-04-17&nd=1967-07-01 [633 2]:\n\n|       DATE | UEMPMED |\n|------------|--------:|\n| 1967-07-01 |     4.5 |\n| 1967-08-01 |     4.7 |\n| 1967-09-01 |     4.6 |\n| 1967-10-01 |     4.9 |\n| 1967-11-01 |     4.7 |\n| 1967-12-01 |     4.8 |\n| 1968-01-01 |     5.1 |\n| 1968-02-01 |     4.5 |\n| 1968-03-01 |     4.1 |\n| 1968-04-01 |     4.6 |\n|        ... |     ... |\n| 2019-05-01 |     9.0 |\n| 2019-06-01 |     9.4 |\n| 2019-07-01 |     9.0 |\n| 2019-08-01 |     9.0 |\n| 2019-09-01 |     9.5 |\n| 2019-10-01 |     9.3 |\n| 2019-11-01 |     9.5 |\n| 2019-12-01 |     9.6 |\n| 2020-01-01 |     9.7 |\n| 2020-02-01 |     9.0 |\n| 2020-03-01 |     5.3 |\n"]]}
+           {:out "",
+            :id :ec6734e1-5ec3-483a-aa75-9f61d8fe32d0,
+            :code "(defn graph-ds\n  []\n  (-> d\n      (ds/update-column \"DATE\" dtype-dt-ops/datetime->milliseconds)\n      (interpolate-loess \"DATE\" \"UEMPMED\" {:bandwidth 0.01\n                                              :iterations 2\n                                              :result-name \"UEMPMED-loess\"})\n      (ds/column-labeled-mapseq [\"UEMPMED\" \"UEMPMED-loess\"])\n      (vega/time-series \"DATE\" :value {:label-key :label\n                                       :background \"white\"})\n      (show-vega)))",
+            :ns "studio.notebook.ds-vega2",
+            :hiccup [:span
+                     {:style {:color "deeppink"}}
+                     "#'studio.notebook.ds-vega2/graph-ds"]}
+           {:out "",
+            :id :59dc9a0b-cf17-4624-98b5-76c37f442ee0,
+            :code "(graph-ds)",
+            :ns "studio.notebook.ds-vega2",
+            :hiccup ^{:R true}
+                    [ui.vega/vega
+                     {:autosize {:type "fit",
+                                 :resize true,
+                                 :contains "padding"},
+                      :legends [{:type :symbol,
+                                 :fill "color",
+                                 :orient "right"}],
+                      :axes [{:orient "bottom",
+                              :scale "x",
+                              :title "DATE"}
+                             {:orient "left",
+                              :scale "y",
+                              :title :value}],
+                      :width 800,
+                      :background "white",
+                      :scales ({:domain [-79056000000
+                                         1583020800000],
+                                :name "x",
+                                :range "width",
+                                :type "utc"}
+                               {:zero true,
+                                :name "y",
+                                :type "linear",
+                                :round true,
+                                :nice true,
+                                :domain [4.0 25.2],
+                                :range "height"}
+                               {:name "color",
+                                :type "ordinal",
+                                :domain ["UEMPMED"
+                                         "UEMPMED-loess"],
+                                :range {:scheme "tableau10"}}),
+                      :label-key :label,
+                      :marks [{:encode {:enter {:stroke {:scale "color",
+                                                         :field :label},
+                                                :strokeWidth {:value 2},
+                                                :x {:field "DATE",
+                                                    :scale "x"},
+                                                :y {:field :value,
+                                                    :scale "y"}}},
+                               :from {:data "UEMPMED"},
+                               :type "line"}
+                              {:encode {:enter {:stroke {:scale "color",
+                                                         :field :label},
+                                                :strokeWidth {:value 2},
+                                                :x {:field "DATE",
+                                                    :scale "x"},
+                                                :y {:field :value,
+                                                    :scale "y"}}},
+                               :from {:data "UEMPMED-loess"},
+                               :type "line"}],
+                      :$schema "https://vega.github.io/schema/vega/v5.json",
+                      :height 450,
+                      :data [{:name "UEMPMED",
+                              :values [^{}
+                                       {"DATE" -79056000000,
+                                        :value 4.5,
+                                        :label "UEMPMED"}
+^{}
+{"DATE" -76377600000, :value 4.7, :label "UEMPMED"}
+^{}
+{"DATE" -73699200000, :value 4.6, :label "UEMPMED"}
+^{}
+{"DATE" -71107200000, :value 4.9, :label "UEMPMED"}
+^{}
+{"DATE" -68428800000, :value 4.7, :label "UEMPMED"}
+^{}
+{"DATE" -65836800000, :value 4.8, :label "UEMPMED"}
+^{}
+{"DATE" -63158400000, :value 5.1, :label "UEMPMED"}
+^{}
+{"DATE" -60480000000, :value 4.5, :label "UEMPMED"}
+^{}
+{"DATE" -57974400000, :value 4.1, :label "UEMPMED"}
+^{}
+{"DATE" -55296000000, :value 4.6, :label "UEMPMED"}
+^{}
+{"DATE" -52704000000, :value 4.4, :label "UEMPMED"}
+^{}
+{"DATE" -50025600000, :value 4.4, :label "UEMPMED"}
+^{}
+{"DATE" -47433600000, :value 4.5, :label "UEMPMED"}
+^{}
+{"DATE" -44755200000, :value 4.2, :label "UEMPMED"}
+^{}
+{"DATE" -42076800000, :value 4.6, :label "UEMPMED"}
+^{}
+{"DATE" -39484800000, :value 4.8, :label "UEMPMED"}
+^{}
+{"DATE" -36806400000, :value 4.4, :label "UEMPMED"}
+^{}
+{"DATE" -34214400000, :value 4.4, :label "UEMPMED"}
+^{}
+{"DATE" -31536000000, :value 4.4, :label "UEMPMED"}
+^{}
+{"DATE" -28857600000, :value 4.9, :label "UEMPMED"}
+^{}
+{"DATE" -26438400000, :value 4.0, :label "UEMPMED"}
+^{}
+{"DATE" -23760000000, :value 4.0, :label "UEMPMED"}
+^{}
+{"DATE" -21168000000, :value 4.2, :label "UEMPMED"}
+^{}
+{"DATE" -18489600000, :value 4.4, :label "UEMPMED"}
+^{}
+{"DATE" -15897600000, :value 4.4, :label "UEMPMED"}
+^{}
+{"DATE" -13219200000, :value 4.4, :label "UEMPMED"}
+^{}
+{"DATE" -10540800000, :value 4.7, :label "UEMPMED"}
+^{}
+{"DATE" -7948800000, :value 4.5, :label "UEMPMED"}
+^{}
+{"DATE" -5270400000, :value 4.8, :label "UEMPMED"}
+^{}
+{"DATE" -2678400000, :value 4.6, :label "UEMPMED"}
+^{}
+{"DATE" 0, :value 4.6, :label "UEMPMED"}
+^{}
+{"DATE" 2678400000, :value 4.5, :label "UEMPMED"}
+^{}
+{"DATE" 5097600000, :value 4.6, :label "UEMPMED"}
+^{}
+{"DATE" 7776000000, :value 4.1, :label "UEMPMED"}
+^{}
+{"DATE" 10368000000, :value 4.7, :label "UEMPMED"}
+^{}
+{"DATE" 13046400000, :value 4.9, :label "UEMPMED"}
+^{}
+{"DATE" 15638400000, :value 5.1, :label "UEMPMED"}
+^{}
+{"DATE" 18316800000, :value 5.4, :label "UEMPMED"}
+^{}
+{"DATE" 20995200000, :value 5.2, :label "UEMPMED"}
+^{}
+{"DATE" 23587200000, :value 5.2, :label "UEMPMED"}
+^{}
+{"DATE" 26265600000, :value 5.6, :label "UEMPMED"}
+^{}
+{"DATE" 28857600000, :value 5.9, :label "UEMPMED"}
+^{}
+{"DATE" 31536000000, :value 6.2, :label "UEMPMED"}
+^{}
+{"DATE" 34214400000, :value 6.3, :label "UEMPMED"}
+^{}
+{"DATE" 36633600000, :value 6.4, :label "UEMPMED"}
+^{}
+{"DATE" 39312000000, :value 6.5, :label "UEMPMED"}
+^{}
+{"DATE" 41904000000, :value 6.7, :label "UEMPMED"}
+^{}
+{"DATE" 44582400000, :value 5.7, :label "UEMPMED"}
+^{}
+{"DATE" 47174400000, :value 6.2, :label "UEMPMED"}
+^{}
+{"DATE" 49852800000, :value 6.4, :label "UEMPMED"}
+^{}
+{"DATE" 52531200000, :value 5.8, :label "UEMPMED"}
+^{}
+{"DATE" 55123200000, :value 6.5, :label "UEMPMED"}
+^{}
+{"DATE" 57801600000, :value 6.4, :label "UEMPMED"}
+^{}
+{"DATE" 60393600000, :value 6.2, :label "UEMPMED"}
+^{}
+{"DATE" 63072000000, :value 6.2, :label "UEMPMED"}
+^{}
+{"DATE" 65750400000, :value 6.6, :label "UEMPMED"}
+^{}
+{"DATE" 68256000000, :value 6.6, :label "UEMPMED"}
+^{}
+{"DATE" 70934400000, :value 6.7, :label "UEMPMED"}
+^{}
+{"DATE" 73526400000, :value 6.6, :label "UEMPMED"}
+^{}
+{"DATE" 76204800000, :value 5.4, :label "UEMPMED"}
+^{}
+{"DATE" 78796800000, :value 6.1, :label "UEMPMED"}
+^{}
+{"DATE" 81475200000, :value 6.0, :label "UEMPMED"}
+^{}
+{"DATE" 84153600000, :value 5.6, :label "UEMPMED"}
+^{}
+{"DATE" 86745600000, :value 5.7, :label "UEMPMED"}
+^{}
+{"DATE" 89424000000, :value 5.7, :label "UEMPMED"}
+^{}
+{"DATE" 92016000000, :value 6.1, :label "UEMPMED"}
+^{}
+{"DATE" 94694400000, :value 5.7, :label "UEMPMED"}
+^{}
+{"DATE" 97372800000, :value 5.2, :label "UEMPMED"}
+^{}
+{"DATE" 99792000000, :value 5.5, :label "UEMPMED"}
+^{}
+{"DATE" 102470400000, :value 5.0, :label "UEMPMED"}
+^{}
+{"DATE" 105062400000, :value 4.9, :label "UEMPMED"}
+^{}
+{"DATE" 107740800000, :value 5.0, :label "UEMPMED"}
+^{}
+{"DATE" 110332800000, :value 5.2, :label "UEMPMED"}
+^{}
+{"DATE" 113011200000, :value 4.9, :label "UEMPMED"}
+^{}
+{"DATE" 115689600000, :value 5.4, :label "UEMPMED"}
+^{}
+{"DATE" 118281600000, :value 5.5, :label "UEMPMED"}
+^{}
+{"DATE" 120960000000, :value 5.1, :label "UEMPMED"}
+^{}
+{"DATE" 123552000000, :value 4.7, :label "UEMPMED"}
+^{}
+{"DATE" 126230400000, :value 5.0, :label "UEMPMED"}
+^{}
+{"DATE" 128908800000, :value 5.1, :label "UEMPMED"}
+^{}
+{"DATE" 131328000000, :value 4.8, :label "UEMPMED"}
+^{}
+{"DATE" 134006400000, :value 5.0, :label "UEMPMED"}
+^{}
+{"DATE" 136598400000, :value 4.6, :label "UEMPMED"}
+^{}
+{"DATE" 139276800000, :value 5.3, :label "UEMPMED"}
+^{}
+{"DATE" 141868800000, :value 5.7, :label "UEMPMED"}
+^{}
+{"DATE" 144547200000, :value 5.0, :label "UEMPMED"}
+^{}
+{"DATE" 147225600000, :value 5.3, :label "UEMPMED"}
+^{}
+{"DATE" 149817600000, :value 5.5, :label "UEMPMED"}
+^{}
+{"DATE" 152496000000, :value 5.2, :label "UEMPMED"}
+^{}
+{"DATE" 155088000000, :value 5.7, :label "UEMPMED"}
+^{}
+{"DATE" 157766400000, :value 6.3, :label "UEMPMED"}
+^{}
+{"DATE" 160444800000, :value 7.1, :label "UEMPMED"}
+^{}
+{"DATE" 162864000000, :value 7.2, :label "UEMPMED"}
+^{}
+{"DATE" 165542400000, :value 8.7, :label "UEMPMED"}
+^{}
+{"DATE" 168134400000, :value 9.4, :label "UEMPMED"}
+^{}
+{"DATE" 170812800000, :value 8.8, :label "UEMPMED"}
+^{}
+{"DATE" 173404800000, :value 8.6, :label "UEMPMED"}
+^{}
+{"DATE" 176083200000, :value 9.2, :label "UEMPMED"}
+^{}
+{"DATE" 178761600000, :value 9.2, :label "UEMPMED"}
+^{}
+{"DATE" 181353600000, :value 8.6, :label "UEMPMED"}
+^{}
+{"DATE" 184032000000, :value 9.5, :label "UEMPMED"}
+^{}
+{"DATE" 186624000000, :value 9.0, :label "UEMPMED"}
+^{}
+{"DATE" 189302400000, :value 9.0, :label "UEMPMED"}
+^{}
+{"DATE" 191980800000, :value 8.2, :label "UEMPMED"}
+^{}
+{"DATE" 194486400000, :value 8.7, :label "UEMPMED"}
+^{}
+{"DATE" 197164800000, :value 8.2, :label "UEMPMED"}
+^{}
+{"DATE" 199756800000, :value 8.3, :label "UEMPMED"}
+^{}
+{"DATE" 202435200000, :value 7.8, :label "UEMPMED"}
+^{}
+{"DATE" 205027200000, :value 7.7, :label "UEMPMED"}
+^{}
+{"DATE" 207705600000, :value 7.9, :label "UEMPMED"}
+^{}
+{"DATE" 210384000000, :value 7.8, :label "UEMPMED"}
+^{}
+{"DATE" 212976000000, :value 7.7, :label "UEMPMED"}
+^{}
+{"DATE" 215654400000, :value 8.4, :label "UEMPMED"}
+^{}
+{"DATE" 218246400000, :value 8.0, :label "UEMPMED"}
+^{}
+{"DATE" 220924800000, :value 7.5, :label "UEMPMED"}
+^{}
+{"DATE" 223603200000, :value 7.2, :label "UEMPMED"}
+^{}
+{"DATE" 226022400000, :value 7.2, :label "UEMPMED"}
+^{}
+{"DATE" 228700800000, :value 7.3, :label "UEMPMED"}
+^{}
+{"DATE" 231292800000, :value 7.9, :label "UEMPMED"}
+^{}
+{"DATE" 233971200000, :value 6.2, :label "UEMPMED"}
+^{}
+{"DATE" 236563200000, :value 7.1, :label "UEMPMED"}
+^{}
+{"DATE" 239241600000, :value 7.0, :label "UEMPMED"}
+^{}
+{"DATE" 241920000000, :value 6.7, :label "UEMPMED"}
+^{}
+{"DATE" 244512000000, :value 6.9, :label "UEMPMED"}
+^{}
+{"DATE" 247190400000, :value 7.0, :label "UEMPMED"}
+^{}
+{"DATE" 249782400000, :value 6.8, :label "UEMPMED"}
+^{}
+{"DATE" 252460800000, :value 6.5, :label "UEMPMED"}
+^{}
+{"DATE" 255139200000, :value 6.7, :label "UEMPMED"}
+^{}
+{"DATE" 257558400000, :value 6.2, :label "UEMPMED"}
+^{}
+{"DATE" 260236800000, :value 6.1, :label "UEMPMED"}
+^{}
+{"DATE" 262828800000, :value 5.7, :label "UEMPMED"}
+^{}
+{"DATE" 265507200000, :value 6.0, :label "UEMPMED"}
+^{}
+{"DATE" 268099200000, :value 5.8, :label "UEMPMED"}
+^{}
+{"DATE" 270777600000, :value 5.8, :label "UEMPMED"}
+^{}
+{"DATE" 273456000000, :value 5.6, :label "UEMPMED"}
+^{}
+{"DATE" 276048000000, :value 5.9, :label "UEMPMED"}
+^{}
+{"DATE" 278726400000, :value 5.5, :label "UEMPMED"}
+^{}
+{"DATE" 281318400000, :value 5.6, :label "UEMPMED"}
+^{}
+{"DATE" 283996800000, :value 5.9, :label "UEMPMED"}
+^{}
+{"DATE" 286675200000, :value 5.9, :label "UEMPMED"}
+^{}
+{"DATE" 289094400000, :value 5.9, :label "UEMPMED"}
+^{}
+{"DATE" 291772800000, :value 5.4, :label "UEMPMED"}
+^{}
+{"DATE" 294364800000, :value 5.6, :label "UEMPMED"}
+^{}
+{"DATE" 297043200000, :value 5.6, :label "UEMPMED"}
+^{}
+{"DATE" 299635200000, :value 5.9, :label "UEMPMED"}
+^{}
+{"DATE" 302313600000, :value 4.8, :label "UEMPMED"}
+^{}
+{"DATE" 304992000000, :value 5.5, :label "UEMPMED"}
+^{}
+{"DATE" 307584000000, :value 5.5, :label "UEMPMED"}
+^{}
+{"DATE" 310262400000, :value 5.3, :label "UEMPMED"}
+^{}
+{"DATE" 312854400000, :value 5.7, :label "UEMPMED"}
+^{}
+{"DATE" 315532800000, :value 5.3, :label "UEMPMED"}
+^{}
+{"DATE" 318211200000, :value 5.8, :label "UEMPMED"}
+^{}
+{"DATE" 320716800000, :value 6.0, :label "UEMPMED"}
+^{}
+{"DATE" 323395200000, :value 5.8, :label "UEMPMED"}
+^{}
+{"DATE" 325987200000, :value 5.7, :label "UEMPMED"}
+^{}
+{"DATE" 328665600000, :value 6.4, :label "UEMPMED"}
+^{}
+{"DATE" 331257600000, :value 7.0, :label "UEMPMED"}
+^{}
+{"DATE" 333936000000, :value 7.5, :label "UEMPMED"}
+^{}
+{"DATE" 336614400000, :value 7.7, :label "UEMPMED"}
+^{}
+{"DATE" 339206400000, :value 7.5, :label "UEMPMED"}
+^{}
+{"DATE" 341884800000, :value 7.7, :label "UEMPMED"}
+^{}
+{"DATE" 344476800000, :value 7.5, :label "UEMPMED"}
+^{}
+{"DATE" 347155200000, :value 7.4, :label "UEMPMED"}
+^{}
+{"DATE" 349833600000, :value 7.1, :label "UEMPMED"}
+^{}
+{"DATE" 352252800000, :value 7.1, :label "UEMPMED"}
+^{}
+{"DATE" 354931200000, :value 7.4, :label "UEMPMED"}
+^{}
+{"DATE" 357523200000, :value 6.9, :label "UEMPMED"}
+^{}
+{"DATE" 360201600000, :value 6.6, :label "UEMPMED"}
+^{}
+{"DATE" 362793600000, :value 7.1, :label "UEMPMED"}
+^{}
+{"DATE" 365472000000, :value 7.2, :label "UEMPMED"}
+^{}
+{"DATE" 368150400000, :value 6.8, :label "UEMPMED"}
+^{}
+{"DATE" 370742400000, :value 6.8, :label "UEMPMED"}
+^{}
+{"DATE" 373420800000, :value 6.9, :label "UEMPMED"}
+^{}
+{"DATE" 376012800000, :value 6.9, :label "UEMPMED"}
+^{}
+{"DATE" 378691200000, :value 7.1, :label "UEMPMED"}
+^{}
+{"DATE" 381369600000, :value 7.5, :label "UEMPMED"}
+^{}
+{"DATE" 383788800000, :value 7.7, :label "UEMPMED"}
+^{}
+{"DATE" 386467200000, :value 8.1, :label "UEMPMED"}
+^{}
+{"DATE" 389059200000, :value 8.5, :label "UEMPMED"}
+^{}
+{"DATE" 391737600000, :value 9.5, :label "UEMPMED"}
+^{}
+{"DATE" 394329600000, :value 8.5, :label "UEMPMED"}
+^{}
+{"DATE" 397008000000, :value 8.7, :label "UEMPMED"}
+^{}
+{"DATE" 399686400000, :value 9.5, :label "UEMPMED"}
+^{}
+{"DATE" 402278400000, :value 9.7, :label "UEMPMED"}
+^{}
+{"DATE" 404956800000, :value 10.0, :label "UEMPMED"}
+^{}
+{"DATE" 407548800000, :value 10.2, :label "UEMPMED"}
+^{}
+{"DATE" 410227200000, :value 11.1, :label "UEMPMED"}
+^{}
+{"DATE" 412905600000, :value 9.8, :label "UEMPMED"}
+^{}
+{"DATE" 415324800000, :value 10.4, :label "UEMPMED"}
+^{}
+{"DATE" 418003200000, :value 10.9, :label "UEMPMED"}
+^{}
+{"DATE" 420595200000, :value 12.3, :label "UEMPMED"}
+^{}
+{"DATE" 423273600000, :value 11.3, :label "UEMPMED"}
+^{}
+{"DATE" 425865600000, :value 10.1, :label "UEMPMED"}
+^{}
+{"DATE" 428544000000, :value 9.3, :label "UEMPMED"}
+^{}
+{"DATE" 431222400000, :value 9.3, :label "UEMPMED"}
+^{}
+{"DATE" 433814400000, :value 9.4, :label "UEMPMED"}
+^{}
+{"DATE" 436492800000, :value 9.3, :label "UEMPMED"}
+^{}
+{"DATE" 439084800000, :value 8.7, :label "UEMPMED"}
+^{}
+{"DATE" 441763200000, :value 9.1, :label "UEMPMED"}
+^{}
+{"DATE" 444441600000, :value 8.3, :label "UEMPMED"}
+^{}
+{"DATE" 446947200000, :value 8.3, :label "UEMPMED"}
+^{}
+{"DATE" 449625600000, :value 8.2, :label "UEMPMED"}
+^{}
+{"DATE" 452217600000, :value 9.1, :label "UEMPMED"}
+^{}
+{"DATE" 454896000000, :value 7.5, :label "UEMPMED"}
+^{}
+{"DATE" 457488000000, :value 7.5, :label "UEMPMED"}
+^{}
+{"DATE" 460166400000, :value 7.3, :label "UEMPMED"}
+^{}
+{"DATE" 462844800000, :value 7.6, :label "UEMPMED"}
+^{}
+{"DATE" 465436800000, :value 7.2, :label "UEMPMED"}
+^{}
+{"DATE" 468115200000, :value 7.2, :label "UEMPMED"}
+^{}
+{"DATE" 470707200000, :value 7.3, :label "UEMPMED"}
+^{}
+{"DATE" 473385600000, :value 6.8, :label "UEMPMED"}
+^{}
+{"DATE" 476064000000, :value 7.1, :label "UEMPMED"}
+^{}
+{"DATE" 478483200000, :value 7.1, :label "UEMPMED"}
+^{}
+{"DATE" 481161600000, :value 6.9, :label "UEMPMED"}
+^{}
+{"DATE" 483753600000, :value 6.9, :label "UEMPMED"}
+^{}
+{"DATE" 486432000000, :value 6.6, :label "UEMPMED"}
+^{}
+{"DATE" 489024000000, :value 6.9, :label "UEMPMED"}
+^{}
+{"DATE" 491702400000, :value 7.1, :label "UEMPMED"}
+^{}
+{"DATE" 494380800000, :value 6.9, :label "UEMPMED"}
+^{}
+{"DATE" 496972800000, :value 7.1, :label "UEMPMED"}
+^{}
+{"DATE" 499651200000, :value 7.0, :label "UEMPMED"}
+^{}
+{"DATE" 502243200000, :value 6.8, :label "UEMPMED"}
+^{}
+{"DATE" 504921600000, :value 6.7, :label "UEMPMED"}
+^{}
+{"DATE" 507600000000, :value 6.9, :label "UEMPMED"}
+^{}
+{"DATE" 510019200000, :value 6.8, :label "UEMPMED"}
+^{}
+{"DATE" 512697600000, :value 6.7, :label "UEMPMED"}
+^{}
+{"DATE" 515289600000, :value 6.8, :label "UEMPMED"}
+^{}
+{"DATE" 517968000000, :value 7.0, :label "UEMPMED"}
+^{}
+{"DATE" 520560000000, :value 6.9, :label "UEMPMED"}
+^{}
+{"DATE" 523238400000, :value 7.1, :label "UEMPMED"}
+^{}
+{"DATE" 525916800000, :value 7.4, :label "UEMPMED"}
+^{}
+{"DATE" 528508800000, :value 7.0, :label "UEMPMED"}
+^{}
+{"DATE" 531187200000, :value 7.1, :label "UEMPMED"}
+^{}
+{"DATE" 533779200000, :value 7.1, :label "UEMPMED"}
+^{}
+{"DATE" 536457600000, :value 6.9, :label "UEMPMED"}
+^{}
+{"DATE" 539136000000, :value 6.6, :label "UEMPMED"}
+^{}
+{"DATE" 541555200000, :value 6.6, :label "UEMPMED"}
+^{}
+{"DATE" 544233600000, :value 7.1, :label "UEMPMED"}
+^{}
+{"DATE" 546825600000, :value 6.6, :label "UEMPMED"}
+^{}
+{"DATE" 549504000000, :value 6.5, :label "UEMPMED"}
+^{}
+{"DATE" 552096000000, :value 6.5, :label "UEMPMED"}
+^{}
+{"DATE" 554774400000, :value 6.4, :label "UEMPMED"}
+^{}
+{"DATE" 557452800000, :value 6.0, :label "UEMPMED"}
+^{}
+{"DATE" 560044800000, :value 6.3, :label "UEMPMED"}
+^{}
+{"DATE" 562723200000, :value 6.2, :label "UEMPMED"}
+^{}
+{"DATE" 565315200000, :value 6.0, :label "UEMPMED"}
+^{}
+{"DATE" 567993600000, :value 6.2, :label "UEMPMED"}
+^{}
+{"DATE" 570672000000, :value 6.3, :label "UEMPMED"}
+^{}
+{"DATE" 573177600000, :value 6.4, :label "UEMPMED"}
+^{}
+{"DATE" 575856000000, :value 5.9, :label "UEMPMED"}
+^{}
+{"DATE" 578448000000, :value 5.9, :label "UEMPMED"}
+^{}
+{"DATE" 581126400000, :value 5.8, :label "UEMPMED"}
+^{}
+{"DATE" 583718400000, :value 6.1, :label "UEMPMED"}
+^{}
+{"DATE" 586396800000, :value 5.9, :label "UEMPMED"}
+^{}
+{"DATE" 589075200000, :value 5.7, :label "UEMPMED"}
+^{}
+{"DATE" 591667200000, :value 5.6, :label "UEMPMED"}
+^{}
+{"DATE" 594345600000, :value 5.7, :label "UEMPMED"}
+^{}
+{"DATE" 596937600000, :value 5.9, :label "UEMPMED"}
+^{}
+{"DATE" 599616000000, :value 5.6, :label "UEMPMED"}
+^{}
+{"DATE" 602294400000, :value 5.4, :label "UEMPMED"}
+^{}
+{"DATE" 604713600000, :value 5.4, :label "UEMPMED"}
+^{}
+{"DATE" 607392000000, :value 5.4, :label "UEMPMED"}
+^{}
+{"DATE" 609984000000, :value 5.3, :label "UEMPMED"}
+^{}
+{"DATE" 612662400000, :value 5.4, :label "UEMPMED"}
+^{}
+{"DATE" 615254400000, :value 5.6, :label "UEMPMED"}
+^{}
+{"DATE" 617932800000, :value 5.0, :label "UEMPMED"}
+^{}
+{"DATE" 620611200000, :value 4.9, :label "UEMPMED"}
+^{}
+{"DATE" 623203200000, :value 4.9, :label "UEMPMED"}
+^{}
+{"DATE" 625881600000, :value 4.8, :label "UEMPMED"}
+^{}
+{"DATE" 628473600000, :value 4.9, :label "UEMPMED"}
+^{}
+{"DATE" 631152000000, :value 5.1, :label "UEMPMED"}
+^{}
+{"DATE" 633830400000, :value 5.3, :label "UEMPMED"}
+^{}
+{"DATE" 636249600000, :value 5.1, :label "UEMPMED"}
+^{}
+{"DATE" 638928000000, :value 4.8, :label "UEMPMED"}
+^{}
+{"DATE" 641520000000, :value 5.2, :label "UEMPMED"}
+^{}
+{"DATE" 644198400000, :value 5.2, :label "UEMPMED"}
+^{}
+{"DATE" 646790400000, :value 5.4, :label "UEMPMED"}
+^{}
+{"DATE" 649468800000, :value 5.4, :label "UEMPMED"}
+^{}
+{"DATE" 652147200000, :value 5.6, :label "UEMPMED"}
+^{}
+{"DATE" 654739200000, :value 5.8, :label "UEMPMED"}
+^{}
+{"DATE" 657417600000, :value 5.7, :label "UEMPMED"}
+^{}
+{"DATE" 660009600000, :value 5.9, :label "UEMPMED"}
+^{}
+{"DATE" 662688000000, :value 6.0, :label "UEMPMED"}
+^{}
+{"DATE" 665366400000, :value 6.2, :label "UEMPMED"}
+^{}
+{"DATE" 667785600000, :value 6.7, :label "UEMPMED"}
+^{}
+{"DATE" 670464000000, :value 6.6, :label "UEMPMED"}
+^{}
+{"DATE" 673056000000, :value 6.4, :label "UEMPMED"}
+^{}
+{"DATE" 675734400000, :value 6.9, :label "UEMPMED"}
+^{}
+{"DATE" 678326400000, :value 7.0, :label "UEMPMED"}
+^{}
+{"DATE" 681004800000, :value 7.3, :label "UEMPMED"}
+^{}
+{"DATE" 683683200000, :value 6.8, :label "UEMPMED"}
+^{}
+{"DATE" 686275200000, :value 7.2, :label "UEMPMED"}
+^{}
+{"DATE" 688953600000, :value 7.5, :label "UEMPMED"}
+^{}
+{"DATE" 691545600000, :value 7.8, :label "UEMPMED"}
+^{}
+{"DATE" 694224000000, :value 8.1, :label "UEMPMED"}
+^{}
+{"DATE" 696902400000, :value 8.2, :label "UEMPMED"}
+^{}
+{"DATE" 699408000000, :value 8.3, :label "UEMPMED"}
+^{}
+{"DATE" 702086400000, :value 8.5, :label "UEMPMED"}
+^{}
+{"DATE" 704678400000, :value 8.8, :label "UEMPMED"}
+^{}
+{"DATE" 707356800000, :value 8.7, :label "UEMPMED"}
+^{}
+{"DATE" 709948800000, :value 8.6, :label "UEMPMED"}
+^{}
+{"DATE" 712627200000, :value 8.8, :label "UEMPMED"}
+^{}
+{"DATE" 715305600000, :value 8.6, :label "UEMPMED"}
+^{}
+{"DATE" 717897600000, :value 9.0, :label "UEMPMED"}
+^{}
+{"DATE" 720576000000, :value 9.0, :label "UEMPMED"}
+^{}
+{"DATE" 723168000000, :value 9.3, :label "UEMPMED"}
+^{}
+{"DATE" 725846400000, :value 8.6, :label "UEMPMED"}
+^{}
+{"DATE" 728524800000, :value 8.5, :label "UEMPMED"}
+^{}
+{"DATE" 730944000000, :value 8.5, :label "UEMPMED"}
+^{}
+{"DATE" 733622400000, :value 8.4, :label "UEMPMED"}
+^{}
+{"DATE" 736214400000, :value 8.1, :label "UEMPMED"}
+^{}
+{"DATE" 738892800000, :value 8.3, :label "UEMPMED"}
+^{}
+{"DATE" 741484800000, :value 8.2, :label "UEMPMED"}
+^{}
+{"DATE" 744163200000, :value 8.2, :label "UEMPMED"}
+^{}
+{"DATE" 746841600000, :value 8.3, :label "UEMPMED"}
+^{}
+{"DATE" 749433600000, :value 8.0, :label "UEMPMED"}
+^{}
+{"DATE" 752112000000, :value 8.3, :label "UEMPMED"}
+^{}
+{"DATE" 754704000000, :value 8.3, :label "UEMPMED"}
+^{}
+{"DATE" 757382400000, :value 8.6, :label "UEMPMED"}
+^{}
+{"DATE" 760060800000, :value 9.2, :label "UEMPMED"}
+^{}
+{"DATE" 762480000000, :value 9.3, :label "UEMPMED"}
+^{}
+{"DATE" 765158400000, :value 9.1, :label "UEMPMED"}
+^{}
+{"DATE" 767750400000, :value 9.2, :label "UEMPMED"}
+^{}
+{"DATE" 770428800000, :value 9.3, :label "UEMPMED"}
+^{}
+{"DATE" 773020800000, :value 9.0, :label "UEMPMED"}
+^{}
+{"DATE" 775699200000, :value 8.9, :label "UEMPMED"}
+^{}
+{"DATE" 778377600000, :value 9.2, :label "UEMPMED"}
+^{}
+{"DATE" 780969600000, :value 10.0, :label "UEMPMED"}
+^{}
+{"DATE" 783648000000, :value 9.0, :label "UEMPMED"}
+^{}
+{"DATE" 786240000000, :value 8.7, :label "UEMPMED"}
+^{}
+{"DATE" 788918400000, :value 8.0, :label "UEMPMED"}
+^{}
+{"DATE" 791596800000, :value 8.1, :label "UEMPMED"}
+^{}
+{"DATE" 794016000000, :value 8.3, :label "UEMPMED"}
+^{}
+{"DATE" 796694400000, :value 8.3, :label "UEMPMED"}
+^{}
+{"DATE" 799286400000, :value 9.1, :label "UEMPMED"}
+^{}
+{"DATE" 801964800000, :value 7.9, :label "UEMPMED"}
+^{}
+{"DATE" 804556800000, :value 8.5, :label "UEMPMED"}
+^{}
+{"DATE" 807235200000, :value 8.3, :label "UEMPMED"}
+^{}
+{"DATE" 809913600000, :value 7.9, :label "UEMPMED"}
+^{}
+{"DATE" 812505600000, :value 8.2, :label "UEMPMED"}
+^{}
+{"DATE" 815184000000, :value 8.0, :label "UEMPMED"}
+^{}
+{"DATE" 817776000000, :value 8.3, :label "UEMPMED"}
+^{}
+{"DATE" 820454400000, :value 8.3, :label "UEMPMED"}
+^{}
+{"DATE" 823132800000, :value 7.8, :label "UEMPMED"}
+^{}
+{"DATE" 825638400000, :value 8.3, :label "UEMPMED"}
+^{}
+{"DATE" 828316800000, :value 8.6, :label "UEMPMED"}
+^{}
+{"DATE" 830908800000, :value 8.6, :label "UEMPMED"}
+^{}
+{"DATE" 833587200000, :value 8.3, :label "UEMPMED"}
+^{}
+{"DATE" 836179200000, :value 8.3, :label "UEMPMED"}
+^{}
+{"DATE" 838857600000, :value 8.4, :label "UEMPMED"}
+^{}
+{"DATE" 841536000000, :value 8.5, :label "UEMPMED"}
+^{}
+{"DATE" 844128000000, :value 8.3, :label "UEMPMED"}
+^{}
+{"DATE" 846806400000, :value 7.7, :label "UEMPMED"}
+^{}
+{"DATE" 849398400000, :value 7.8, :label "UEMPMED"}
+^{}
+{"DATE" 852076800000, :value 7.8, :label "UEMPMED"}
+^{}
+{"DATE" 854755200000, :value 8.1, :label "UEMPMED"}
+^{}
+{"DATE" 857174400000, :value 7.9, :label "UEMPMED"}
+^{}
+{"DATE" 859852800000, :value 8.3, :label "UEMPMED"}
+^{}
+{"DATE" 862444800000, :value 8.0, :label "UEMPMED"}
+^{}
+{"DATE" 865123200000, :value 8.0, :label "UEMPMED"}
+^{}
+{"DATE" 867715200000, :value 8.3, :label "UEMPMED"}
+^{}
+{"DATE" 870393600000, :value 7.8, :label "UEMPMED"}
+^{}
+{"DATE" 873072000000, :value 8.2, :label "UEMPMED"}
+^{}
+{"DATE" 875664000000, :value 7.7, :label "UEMPMED"}
+^{}
+{"DATE" 878342400000, :value 7.6, :label "UEMPMED"}
+^{}
+{"DATE" 880934400000, :value 7.5, :label "UEMPMED"}
+^{}
+{"DATE" 883612800000, :value 7.4, :label "UEMPMED"}
+^{}
+{"DATE" 886291200000, :value 7.0, :label "UEMPMED"}
+^{}
+{"DATE" 888710400000, :value 6.8, :label "UEMPMED"}
+^{}
+{"DATE" 891388800000, :value 6.7, :label "UEMPMED"}
+^{}
+{"DATE" 893980800000, :value 6.0, :label "UEMPMED"}
+^{}
+{"DATE" 896659200000, :value 6.9, :label "UEMPMED"}
+^{}
+{"DATE" 899251200000, :value 6.7, :label "UEMPMED"}
+^{}
+{"DATE" 901929600000, :value 6.8, :label "UEMPMED"}
+^{}
+{"DATE" 904608000000, :value 6.7, :label "UEMPMED"}
+^{}
+{"DATE" 907200000000, :value 5.8, :label "UEMPMED"}
+^{}
+{"DATE" 909878400000, :value 6.6, :label "UEMPMED"}
+^{}
+{"DATE" 912470400000, :value 6.8, :label "UEMPMED"}
+^{}
+{"DATE" 915148800000, :value 6.9, :label "UEMPMED"}
+^{}
+{"DATE" 917827200000, :value 6.8, :label "UEMPMED"}
+^{}
+{"DATE" 920246400000, :value 6.8, :label "UEMPMED"}
+^{}
+{"DATE" 922924800000, :value 6.2, :label "UEMPMED"}
+^{}
+{"DATE" 925516800000, :value 6.5, :label "UEMPMED"}
+^{}
+{"DATE" 928195200000, :value 6.3, :label "UEMPMED"}
+^{}
+{"DATE" 930787200000, :value 5.8, :label "UEMPMED"}
+^{}
+{"DATE" 933465600000, :value 6.5, :label "UEMPMED"}
+^{}
+{"DATE" 936144000000, :value 6.0, :label "UEMPMED"}
+^{}
+{"DATE" 938736000000, :value 6.1, :label "UEMPMED"}
+^{}
+{"DATE" 941414400000, :value 6.2, :label "UEMPMED"}
+^{}
+{"DATE" 944006400000, :value 5.8, :label "UEMPMED"}
+^{}
+{"DATE" 946684800000, :value 5.8, :label "UEMPMED"}
+^{}
+{"DATE" 949363200000, :value 6.1, :label "UEMPMED"}
+^{}
+{"DATE" 951868800000, :value 6.0, :label "UEMPMED"}
+^{}
+{"DATE" 954547200000, :value 6.1, :label "UEMPMED"}
+^{}
+{"DATE" 957139200000, :value 5.8, :label "UEMPMED"}
+^{}
+{"DATE" 959817600000, :value 5.7, :label "UEMPMED"}
+^{}
+{"DATE" 962409600000, :value 6.0, :label "UEMPMED"}
+^{}
+{"DATE" 965088000000, :value 6.3, :label "UEMPMED"}
+^{}
+{"DATE" 967766400000, :value 5.2, :label "UEMPMED"}
+^{}
+{"DATE" 970358400000, :value 6.1, :label "UEMPMED"}
+^{}
+{"DATE" 973036800000, :value 6.1, :label "UEMPMED"}
+^{}
+{"DATE" 975628800000, :value 6.0, :label "UEMPMED"}
+^{}
+{"DATE" 978307200000, :value 5.8, :label "UEMPMED"}
+^{}
+{"DATE" 980985600000, :value 6.1, :label "UEMPMED"}
+^{}
+{"DATE" 983404800000, :value 6.6, :label "UEMPMED"}
+^{}
+{"DATE" 986083200000, :value 5.9, :label "UEMPMED"}
+^{}
+{"DATE" 988675200000, :value 6.3, :label "UEMPMED"}
+^{}
+{"DATE" 991353600000, :value 6.0, :label "UEMPMED"}
+^{}
+{"DATE" 993945600000, :value 6.8, :label "UEMPMED"}
+^{}
+{"DATE" 996624000000, :value 6.9, :label "UEMPMED"}
+^{}
+{"DATE" 999302400000, :value 7.2, :label "UEMPMED"}
+^{}
+{"DATE" 1001894400000, :value 7.3, :label "UEMPMED"}
+^{}
+{"DATE" 1004572800000, :value 7.7, :label "UEMPMED"}
+^{}
+{"DATE" 1007164800000, :value 8.2, :label "UEMPMED"}
+^{}
+{"DATE" 1009843200000, :value 8.4, :label "UEMPMED"}
+^{}
+{"DATE" 1012521600000, :value 8.3, :label "UEMPMED"}
+^{}
+{"DATE" 1014940800000, :value 8.4, :label "UEMPMED"}
+^{}
+{"DATE" 1017619200000, :value 8.9, :label "UEMPMED"}
+^{}
+{"DATE" 1020211200000, :value 9.5, :label "UEMPMED"}
+^{}
+{"DATE" 1022889600000, :value 11.0, :label "UEMPMED"}
+^{}
+{"DATE" 1025481600000, :value 8.9, :label "UEMPMED"}
+^{}
+{"DATE" 1028160000000, :value 9.0, :label "UEMPMED"}
+^{}
+{"DATE" 1030838400000, :value 9.5, :label "UEMPMED"}
+^{}
+{"DATE" 1033430400000, :value 9.6, :label "UEMPMED"}
+^{}
+{"DATE" 1036108800000, :value 9.3, :label "UEMPMED"}
+^{}
+{"DATE" 1038700800000, :value 9.6, :label "UEMPMED"}
+^{}
+{"DATE" 1041379200000, :value 9.6, :label "UEMPMED"}
+^{}
+{"DATE" 1044057600000, :value 9.5, :label "UEMPMED"}
+^{}
+{"DATE" 1046476800000, :value 9.7, :label "UEMPMED"}
+^{}
+{"DATE" 1049155200000, :value 10.2, :label "UEMPMED"}
+^{}
+{"DATE" 1051747200000, :value 9.9, :label "UEMPMED"}
+^{}
+{"DATE" 1054425600000, :value 11.5, :label "UEMPMED"}
+^{}
+{"DATE" 1057017600000, :value 10.3, :label "UEMPMED"}
+^{}
+{"DATE" 1059696000000, :value 10.1, :label "UEMPMED"}
+^{}
+{"DATE" 1062374400000, :value 10.2, :label "UEMPMED"}
+^{}
+{"DATE" 1064966400000, :value 10.4, :label "UEMPMED"}
+^{}
+{"DATE" 1067644800000, :value 10.3, :label "UEMPMED"}
+^{}
+{"DATE" 1070236800000, :value 10.4, :label "UEMPMED"}
+^{}
+{"DATE" 1072915200000, :value 10.6, :label "UEMPMED"}
+^{}
+{"DATE" 1075593600000, :value 10.2, :label "UEMPMED"}
+^{}
+{"DATE" 1078099200000, :value 10.2, :label "UEMPMED"}
+^{}
+{"DATE" 1080777600000, :value 9.5, :label "UEMPMED"}
+^{}
+{"DATE" 1083369600000, :value 9.9, :label "UEMPMED"}
+^{}
+{"DATE" 1086048000000, :value 11.0, :label "UEMPMED"}
+^{}
+{"DATE" 1088640000000, :value 8.9, :label "UEMPMED"}
+^{}
+{"DATE" 1091318400000, :value 9.2, :label "UEMPMED"}
+^{}
+{"DATE" 1093996800000, :value 9.6, :label "UEMPMED"}
+^{}
+{"DATE" 1096588800000, :value 9.5, :label "UEMPMED"}
+^{}
+{"DATE" 1099267200000, :value 9.7, :label "UEMPMED"}
+^{}
+{"DATE" 1101859200000, :value 9.5, :label "UEMPMED"}
+^{}
+{"DATE" 1104537600000, :value 9.4, :label "UEMPMED"}
+^{}
+{"DATE" 1107216000000, :value 9.2, :label "UEMPMED"}
+^{}
+{"DATE" 1109635200000, :value 9.3, :label "UEMPMED"}
+^{}
+{"DATE" 1112313600000, :value 9.0, :label "UEMPMED"}
+^{}
+{"DATE" 1114905600000, :value 9.1, :label "UEMPMED"}
+^{}
+{"DATE" 1117584000000, :value 9.0, :label "UEMPMED"}
+^{}
+{"DATE" 1120176000000, :value 8.8, :label "UEMPMED"}
+^{}
+{"DATE" 1122854400000, :value 9.2, :label "UEMPMED"}
+^{}
+{"DATE" 1125532800000, :value 8.4, :label "UEMPMED"}
+^{}
+{"DATE" 1128124800000, :value 8.6, :label "UEMPMED"}
+^{}
+{"DATE" 1130803200000, :value 8.5, :label "UEMPMED"}
+^{}
+{"DATE" 1133395200000, :value 8.7, :label "UEMPMED"}
+^{}
+{"DATE" 1136073600000, :value 8.6, :label "UEMPMED"}
+^{}
+{"DATE" 1138752000000, :value 9.1, :label "UEMPMED"}
+^{}
+{"DATE" 1141171200000, :value 8.7, :label "UEMPMED"}
+^{}
+{"DATE" 1143849600000, :value 8.4, :label "UEMPMED"}
+^{}
+{"DATE" 1146441600000, :value 8.5, :label "UEMPMED"}
+^{}
+{"DATE" 1149120000000, :value 7.3, :label "UEMPMED"}
+^{}
+{"DATE" 1151712000000, :value 8.0, :label "UEMPMED"}
+^{}
+{"DATE" 1154390400000, :value 8.4, :label "UEMPMED"}
+^{}
+{"DATE" 1157068800000, :value 8.0, :label "UEMPMED"}
+^{}
+{"DATE" 1159660800000, :value 7.9, :label "UEMPMED"}
+^{}
+{"DATE" 1162339200000, :value 8.3, :label "UEMPMED"}
+^{}
+{"DATE" 1164931200000, :value 7.5, :label "UEMPMED"}
+^{}
+{"DATE" 1167609600000, :value 8.3, :label "UEMPMED"}
+^{}
+{"DATE" 1170288000000, :value 8.5, :label "UEMPMED"}
+^{}
+{"DATE" 1172707200000, :value 9.1, :label "UEMPMED"}
+^{}
+{"DATE" 1175385600000, :value 8.6, :label "UEMPMED"}
+^{}
+{"DATE" 1177977600000, :value 8.2, :label "UEMPMED"}
+^{}
+{"DATE" 1180656000000, :value 7.7, :label "UEMPMED"}
+^{}
+{"DATE" 1183248000000, :value 8.7, :label "UEMPMED"}
+^{}
+{"DATE" 1185926400000, :value 8.8, :label "UEMPMED"}
+^{}
+{"DATE" 1188604800000, :value 8.7, :label "UEMPMED"}
+^{}
+{"DATE" 1191196800000, :value 8.4, :label "UEMPMED"}
+^{}
+{"DATE" 1193875200000, :value 8.6, :label "UEMPMED"}
+^{}
+{"DATE" 1196467200000, :value 8.4, :label "UEMPMED"}
+^{}
+{"DATE" 1199145600000, :value 9.0, :label "UEMPMED"}
+^{}
+{"DATE" 1201824000000, :value 8.7, :label "UEMPMED"}
+^{}
+{"DATE" 1204329600000, :value 8.7, :label "UEMPMED"}
+^{}
+{"DATE" 1207008000000, :value 9.4, :label "UEMPMED"}
+^{}
+{"DATE" 1209600000000, :value 7.9, :label "UEMPMED"}
+^{}
+{"DATE" 1212278400000, :value 9.0, :label "UEMPMED"}
+^{}
+{"DATE" 1214870400000, :value 9.7, :label "UEMPMED"}
+^{}
+{"DATE" 1217548800000, :value 9.7, :label "UEMPMED"}
+^{}
+{"DATE" 1220227200000, :value 10.2, :label "UEMPMED"}
+^{}
+{"DATE" 1222819200000, :value 10.4, :label "UEMPMED"}
+^{}
+{"DATE" 1225497600000, :value 9.8, :label "UEMPMED"}
+^{}
+{"DATE" 1228089600000, :value 10.5, :label "UEMPMED"}
+^{}
+{"DATE" 1230768000000, :value 10.7, :label "UEMPMED"}
+^{}
+{"DATE" 1233446400000, :value 11.7, :label "UEMPMED"}
+^{}
+{"DATE" 1235865600000, :value 12.3, :label "UEMPMED"}
+^{}
+{"DATE" 1238544000000, :value 13.1, :label "UEMPMED"}
+^{}
+{"DATE" 1241136000000, :value 14.2, :label "UEMPMED"}
+^{}
+{"DATE" 1243814400000, :value 17.2, :label "UEMPMED"}
+^{}
+{"DATE" 1246406400000, :value 16.0, :label "UEMPMED"}
+^{}
+{"DATE" 1249084800000, :value 16.3, :label "UEMPMED"}
+^{}
+{"DATE" 1251763200000, :value 17.8, :label "UEMPMED"}
+^{}
+{"DATE" 1254355200000, :value 18.9, :label "UEMPMED"}
+^{}
+{"DATE" 1257033600000, :value 19.8, :label "UEMPMED"}
+^{}
+{"DATE" 1259625600000, :value 20.1, :label "UEMPMED"}
+^{}
+{"DATE" 1262304000000, :value 20.0, :label "UEMPMED"}
+^{}
+{"DATE" 1264982400000, :value 19.9, :label "UEMPMED"}
+^{}
+{"DATE" 1267401600000, :value 20.4, :label "UEMPMED"}
+^{}
+{"DATE" 1270080000000, :value 22.1, :label "UEMPMED"}
+^{}
+{"DATE" 1272672000000, :value 22.3, :label "UEMPMED"}
+^{}
+{"DATE" 1275350400000, :value 25.2, :label "UEMPMED"}
+^{}
+{"DATE" 1277942400000, :value 22.3, :label "UEMPMED"}
+^{}
+{"DATE" 1280620800000, :value 21.0, :label "UEMPMED"}
+^{}
+{"DATE" 1283299200000, :value 20.3, :label "UEMPMED"}
+^{}
+{"DATE" 1285891200000, :value 21.2, :label "UEMPMED"}
+^{}
+{"DATE" 1288569600000, :value 21.0, :label "UEMPMED"}
+^{}
+{"DATE" 1291161600000, :value 21.9, :label "UEMPMED"}
+^{}
+{"DATE" 1293840000000, :value 21.5, :label "UEMPMED"}
+^{}
+{"DATE" 1296518400000, :value 21.1, :label "UEMPMED"}
+^{}
+{"DATE" 1298937600000, :value 21.5, :label "UEMPMED"}
+^{}
+{"DATE" 1301616000000, :value 20.9, :label "UEMPMED"}
+^{}
+{"DATE" 1304208000000, :value 21.6, :label "UEMPMED"}
+^{}
+{"DATE" 1306886400000, :value 22.4, :label "UEMPMED"}
+^{}
+{"DATE" 1309478400000, :value 22.0, :label "UEMPMED"}
+^{}
+{"DATE" 1312156800000, :value 22.4, :label "UEMPMED"}
+^{}
+{"DATE" 1314835200000, :value 22.0, :label "UEMPMED"}
+^{}
+{"DATE" 1317427200000, :value 20.6, :label "UEMPMED"}
+^{}
+{"DATE" 1320105600000, :value 20.8, :label "UEMPMED"}
+^{}
+{"DATE" 1322697600000, :value 20.5, :label "UEMPMED"}
+^{}
+{"DATE" 1325376000000, :value 20.8, :label "UEMPMED"}
+^{}
+{"DATE" 1328054400000, :value 19.7, :label "UEMPMED"}
+^{}
+{"DATE" 1330560000000, :value 19.2, :label "UEMPMED"}
+^{}
+{"DATE" 1333238400000, :value 19.1, :label "UEMPMED"}
+^{}
+{"DATE" 1335830400000, :value 19.9, :label "UEMPMED"}
+^{}
+{"DATE" 1338508800000, :value 20.4, :label "UEMPMED"}
+^{}
+{"DATE" 1341100800000, :value 17.5, :label "UEMPMED"}
+^{}
+{"DATE" 1343779200000, :value 18.4, :label "UEMPMED"}
+^{}
+{"DATE" 1346457600000, :value 18.8, :label "UEMPMED"}
+^{}
+{"DATE" 1349049600000, :value 19.9, :label "UEMPMED"}
+^{}
+{"DATE" 1351728000000, :value 18.6, :label "UEMPMED"}
+^{}
+{"DATE" 1354320000000, :value 17.7, :label "UEMPMED"}
+^{}
+{"DATE" 1356998400000, :value 15.8, :label "UEMPMED"}
+^{}
+{"DATE" 1359676800000, :value 17.2, :label "UEMPMED"}
+^{}
+{"DATE" 1362096000000, :value 17.6, :label "UEMPMED"}
+^{}
+{"DATE" 1364774400000, :value 17.1, :label "UEMPMED"}
+^{}
+{"DATE" 1367366400000, :value 17.1, :label "UEMPMED"}
+^{}
+{"DATE" 1370044800000, :value 17.0, :label "UEMPMED"}
+^{}
+{"DATE" 1372636800000, :value 16.2, :label "UEMPMED"}
+^{}
+{"DATE" 1375315200000, :value 16.5, :label "UEMPMED"}
+^{}
+{"DATE" 1377993600000, :value 16.5, :label "UEMPMED"}
+^{}
+{"DATE" 1380585600000, :value 16.3, :label "UEMPMED"}
+^{}
+{"DATE" 1383264000000, :value 17.1, :label "UEMPMED"}
+^{}
+{"DATE" 1385856000000, :value 17.3, :label "UEMPMED"}
+^{}
+{"DATE" 1388534400000, :value 15.4, :label "UEMPMED"}
+^{}
+{"DATE" 1391212800000, :value 15.9, :label "UEMPMED"}
+^{}
+{"DATE" 1393632000000, :value 15.8, :label "UEMPMED"}
+^{}
+{"DATE" 1396310400000, :value 15.7, :label "UEMPMED"}
+^{}
+{"DATE" 1398902400000, :value 14.6, :label "UEMPMED"}
+^{}
+{"DATE" 1401580800000, :value 13.8, :label "UEMPMED"}
+^{}
+{"DATE" 1404172800000, :value 13.1, :label "UEMPMED"}
+^{}
+{"DATE" 1406851200000, :value 12.9, :label "UEMPMED"}
+^{}
+{"DATE" 1409529600000, :value 13.4, :label "UEMPMED"}
+^{}
+{"DATE" 1412121600000, :value 13.6, :label "UEMPMED"}
+^{}
+{"DATE" 1414800000000, :value 13.0, :label "UEMPMED"}
+^{}
+{"DATE" 1417392000000, :value 12.9, :label "UEMPMED"}
+^{}
+{"DATE" 1420070400000, :value 13.2, :label "UEMPMED"}
+^{}
+{"DATE" 1422748800000, :value 12.9, :label "UEMPMED"}
+^{}
+{"DATE" 1425168000000, :value 12.0, :label "UEMPMED"}
+^{}
+{"DATE" 1427846400000, :value 11.5, :label "UEMPMED"}
+^{}
+{"DATE" 1430438400000, :value 11.6, :label "UEMPMED"}
+^{}
+{"DATE" 1433116800000, :value 11.8, :label "UEMPMED"}
+^{}
+{"DATE" 1435708800000, :value 10.9, :label "UEMPMED"}
+^{}
+{"DATE" 1438387200000, :value 11.7, :label "UEMPMED"}
+^{}
+{"DATE" 1441065600000, :value 11.3, :label "UEMPMED"}
+^{}
+{"DATE" 1443657600000, :value 11.3, :label "UEMPMED"}
+^{}
+{"DATE" 1446336000000, :value 11.0, :label "UEMPMED"}
+^{}
+{"DATE" 1448928000000, :value 11.0, :label "UEMPMED"}
+^{}
+{"DATE" 1451606400000, :value 11.3, :label "UEMPMED"}
+^{}
+{"DATE" 1454284800000, :value 11.3, :label "UEMPMED"}
+^{}
+{"DATE" 1456790400000, :value 11.3, :label "UEMPMED"}
+^{}
+{"DATE" 1459468800000, :value 11.1, :label "UEMPMED"}
+^{}
+{"DATE" 1462060800000, :value 10.7, :label "UEMPMED"}
+^{}
+{"DATE" 1464739200000, :value 10.8, :label "UEMPMED"}
+^{}
+{"DATE" 1467331200000, :value 11.1, :label "UEMPMED"}
+^{}
+{"DATE" 1470009600000, :value 10.7, :label "UEMPMED"}
+^{}
+{"DATE" 1472688000000, :value 10.2, :label "UEMPMED"}
+^{}
+{"DATE" 1475280000000, :value 10.1, :label "UEMPMED"}
+^{}
+{"DATE" 1477958400000, :value 10.3, :label "UEMPMED"}
+^{}
+{"DATE" 1480550400000, :value 10.6, :label "UEMPMED"}
+^{}
+{"DATE" 1483228800000, :value 10.3, :label "UEMPMED"}
+^{}
+{"DATE" 1485907200000, :value 10.1, :label "UEMPMED"}
+^{}
+{"DATE" 1488326400000, :value 10.3, :label "UEMPMED"}
+^{}
+{"DATE" 1491004800000, :value 9.9, :label "UEMPMED"}
+^{}
+{"DATE" 1493596800000, :value 10.5, :label "UEMPMED"}
+^{}
+{"DATE" 1496275200000, :value 10.0, :label "UEMPMED"}
+^{}
+{"DATE" 1498867200000, :value 10.2, :label "UEMPMED"}
+^{}
+{"DATE" 1501545600000, :value 10.3, :label "UEMPMED"}
+^{}
+{"DATE" 1504224000000, :value 10.1, :label "UEMPMED"}
+^{}
+{"DATE" 1506816000000, :value 9.7, :label "UEMPMED"}
+^{}
+{"DATE" 1509494400000, :value 9.8, :label "UEMPMED"}
+^{}
+{"DATE" 1512086400000, :value 9.3, :label "UEMPMED"}
+^{}
+{"DATE" 1514764800000, :value 9.7, :label "UEMPMED"}
+^{}
+{"DATE" 1517443200000, :value 9.3, :label "UEMPMED"}
+^{}
+{"DATE" 1519862400000, :value 8.8, :label "UEMPMED"}
+^{}
+{"DATE" 1522540800000, :value 9.6, :label "UEMPMED"}
+^{}
+{"DATE" 1525132800000, :value 9.2, :label "UEMPMED"}
+^{}
+{"DATE" 1527811200000, :value 9.0, :label "UEMPMED"}
+^{}
+{"DATE" 1530403200000, :value 9.7, :label "UEMPMED"}
+^{}
+{"DATE" 1533081600000, :value 9.3, :label "UEMPMED"}
+^{}
+{"DATE" 1535760000000, :value 9.2, :label "UEMPMED"}
+^{}
+{"DATE" 1538352000000, :value 9.4, :label "UEMPMED"}
+^{}
+{"DATE" 1541030400000, :value 9.0, :label "UEMPMED"}
+^{}
+{"DATE" 1543622400000, :value 9.7, :label "UEMPMED"}
+^{}
+{"DATE" 1546300800000, :value 9.2, :label "UEMPMED"}
+^{}
+{"DATE" 1548979200000, :value 9.3, :label "UEMPMED"}
+^{}
+{"DATE" 1551398400000, :value 9.2, :label "UEMPMED"}
+^{}
+{"DATE" 1554076800000, :value 8.9, :label "UEMPMED"}
+^{}
+{"DATE" 1556668800000, :value 9.0, :label "UEMPMED"}
+^{}
+{"DATE" 1559347200000, :value 9.4, :label "UEMPMED"}
+^{}
+{"DATE" 1561939200000, :value 9.0, :label "UEMPMED"}
+^{}
+{"DATE" 1564617600000, :value 9.0, :label "UEMPMED"}
+^{}
+{"DATE" 1567296000000, :value 9.5, :label "UEMPMED"}
+^{}
+{"DATE" 1569888000000, :value 9.3, :label "UEMPMED"}
+^{}
+{"DATE" 1572566400000, :value 9.5, :label "UEMPMED"}
+^{}
+{"DATE" 1575158400000, :value 9.6, :label "UEMPMED"}
+^{}
+{"DATE" 1577836800000, :value 9.7, :label "UEMPMED"}
+^{}
+{"DATE" 1580515200000, :value 9.0, :label "UEMPMED"}
+^{}
+{"DATE" 1583020800000, :value 5.3, :label "UEMPMED"}]}
+                             {:name "UEMPMED-loess",
+                              :values [^{}
+                                       {"DATE" -79056000000,
+                                        :value 4.53261676894183,
+                                        :label "UEMPMED-loess"}
+^{}
+{"DATE" -76377600000,
+ :value 4.617507593639536,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" -73699200000,
+ :value 4.702257611662309,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" -71107200000,
+ :value 4.738800763173459,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" -68428800000,
+ :value 4.793768942738783,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" -65836800000,
+ :value 4.7929106233185275,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" -63158400000,
+ :value 4.682382844434864,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" -60480000000,
+ :value 4.576452608486114,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" -57974400000,
+ :value 4.48019721138261,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" -55296000000,
+ :value 4.419443712620884,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" -52704000000,
+ :value 4.442350796752892,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" -50025600000,
+ :value 4.4273260447358975,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" -47433600000,
+ :value 4.408029513135628,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" -44755200000,
+ :value 4.474052434826369,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" -42076800000,
+ :value 4.523012287942957,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" -39484800000,
+ :value 4.5392145059397,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" -36806400000,
+ :value 4.512359530731922,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" -34214400000,
+ :value 4.434743294090847,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" -31536000000,
+ :value 4.352107570502552,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" -28857600000,
+ :value 4.234764595619396,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" -26438400000,
+ :value 4.156495348806436,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" -23760000000,
+ :value 4.098141429817742,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" -21168000000,
+ :value 4.1978139809544635,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" -18489600000,
+ :value 4.3094602514775175,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" -15897600000,
+ :value 4.40733080906059,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" -13219200000,
+ :value 4.485009482385565,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" -10540800000,
+ :value 4.550845044482437,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" -7948800000,
+ :value 4.624308248835646,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" -5270400000,
+ :value 4.639137055568808,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" -2678400000,
+ :value 4.630783497582558,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 0, :value 4.594359447312815, :label "UEMPMED-loess"}
+^{}
+{"DATE" 2678400000,
+ :value 4.537914607855557,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 5097600000,
+ :value 4.516287057720699,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 7776000000,
+ :value 4.584390689602491,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 10368000000,
+ :value 4.682318478007802,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 13046400000,
+ :value 4.888989705209352,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 15638400000,
+ :value 5.091046758686727,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 18316800000,
+ :value 5.194890625632135,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 20995200000,
+ :value 5.28102291588651,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 23587200000,
+ :value 5.3949608099599455,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 26265600000,
+ :value 5.600529759217757,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 28857600000,
+ :value 5.869003903920731,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 31536000000,
+ :value 6.10763207100784,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 34214400000,
+ :value 6.2841001830493095,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 36633600000,
+ :value 6.403786069978256,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 39312000000,
+ :value 6.510158941633127,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 41904000000,
+ :value 6.447819296241118,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 44582400000,
+ :value 6.391671831195069,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 47174400000,
+ :value 6.296527887699659,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 49852800000,
+ :value 6.2548665290135945,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 52531200000,
+ :value 6.325881310221359,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 55123200000,
+ :value 6.333894253624674,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 57801600000,
+ :value 6.333302133043622,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 60393600000,
+ :value 6.318689689516016,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 63072000000,
+ :value 6.3663705435953535,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 65750400000,
+ :value 6.470999675868633,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 68256000000,
+ :value 6.5853525743424495,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 70934400000,
+ :value 6.634172632898077,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 73526400000,
+ :value 6.52001063465419,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 76204800000,
+ :value 6.346094530592574,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 78796800000,
+ :value 6.144536745725747,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 81475200000,
+ :value 5.926613328394551,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 84153600000,
+ :value 5.7927320137734455,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 86745600000,
+ :value 5.734835799809224,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 89424000000,
+ :value 5.767016146487983,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 92016000000,
+ :value 5.737507869430873,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 94694400000,
+ :value 5.638844576148608,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 97372800000,
+ :value 5.467024698102817,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 99792000000,
+ :value 5.262054641122454,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 102470400000,
+ :value 5.115419874874859,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 105062400000,
+ :value 5.029605267046285,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 107740800000,
+ :value 5.020979959111896,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 110332800000,
+ :value 5.073397444776638,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 113011200000,
+ :value 5.192534508080662,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 115689600000,
+ :value 5.2525175033684,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 118281600000,
+ :value 5.237535258273853,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 120960000000,
+ :value 5.127553540857392,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 123552000000,
+ :value 5.017048577002155,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 126230400000,
+ :value 4.954973640979599,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 128908800000,
+ :value 4.955298071581698,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 131328000000,
+ :value 4.943948842007105,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 134006400000,
+ :value 4.939812044007054,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 136598400000,
+ :value 5.0680591128903245,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 139276800000,
+ :value 5.189686251328719,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 141868800000,
+ :value 5.251748631166061,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 144547200000,
+ :value 5.306351970704414,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 147225600000,
+ :value 5.299954908799432,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 149817600000,
+ :value 5.371780576138516,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 152496000000,
+ :value 5.569157777580234,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 155088000000,
+ :value 5.859150255041445,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 157766400000,
+ :value 6.356607364554666,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 160444800000,
+ :value 7.030642717776686,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 162864000000,
+ :value 7.730749187062486,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 165542400000,
+ :value 8.131983528655809,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 168134400000,
+ :value 8.580608685365801,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 170812800000,
+ :value 8.755730084565393,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 173404800000,
+ :value 8.872818621973153,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 176083200000,
+ :value 9.009058552572583,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 178761600000,
+ :value 9.119758253549431,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 181353600000,
+ :value 9.14651609534224,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 184032000000,
+ :value 9.093626057384695,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 186624000000,
+ :value 9.060559261659224,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 189302400000,
+ :value 8.865170287775966,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 191980800000,
+ :value 8.679086732841688,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 194486400000,
+ :value 8.492460454144867,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 197164800000,
+ :value 8.330927745919949,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 199756800000,
+ :value 8.123175294363186,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 202435200000,
+ :value 7.95067321550564,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 205027200000,
+ :value 7.84645304654834,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 207705600000,
+ :value 7.79524603975486,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 210384000000,
+ :value 7.818654605773443,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 212976000000,
+ :value 7.887736188142211,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 215654400000,
+ :value 7.870011999250992,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 218246400000,
+ :value 7.8093319765685045,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 220924800000,
+ :value 7.6026613424300145,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 223603200000,
+ :value 7.365814243227952,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 226022400000,
+ :value 7.263974279887764,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 228700800000,
+ :value 7.322974811950876,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 231292800000,
+ :value 7.24081966943338,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 233971200000,
+ :value 7.186739981554674,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 236563200000,
+ :value 7.136596249986265,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 239241600000,
+ :value 6.964598252622732,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 241920000000,
+ :value 6.9042136504787734,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 244512000000,
+ :value 6.8772040086099695,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 247190400000,
+ :value 6.842858830511678,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 249782400000,
+ :value 6.771360823846635,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 252460800000,
+ :value 6.636137000206688,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 255139200000,
+ :value 6.451774022217258,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 257558400000,
+ :value 6.28384626053635,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 260236800000,
+ :value 6.075594111876601,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 262828800000,
+ :value 5.95145035951687,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 265507200000,
+ :value 5.87071353355877,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 268099200000,
+ :value 5.827239334991337,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 270777600000,
+ :value 5.776668842393974,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 273456000000,
+ :value 5.733398033104443,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 276048000000,
+ :value 5.675191162226306,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 278726400000,
+ :value 5.673986822759333,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 281318400000,
+ :value 5.70622565170048,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 283996800000,
+ :value 5.782705288604558,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 286675200000,
+ :value 5.822974631405083,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 289094400000,
+ :value 5.7550792684954235,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 291772800000,
+ :value 5.662723238599327,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 294364800000,
+ :value 5.602485951767953,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 297043200000,
+ :value 5.687961551263893,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 299635200000,
+ :value 5.67300475836505,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 302313600000,
+ :value 5.633152619754329,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 304992000000,
+ :value 5.56359913790406,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 307584000000,
+ :value 5.46849094185194,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 310262400000,
+ :value 5.4779803824509345,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 312854400000,
+ :value 5.4991667875757475,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 315532800000,
+ :value 5.623111301082295,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 318211200000,
+ :value 5.731255374184382,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 320716800000,
+ :value 5.813157487637438,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 323395200000,
+ :value 5.914117108335409,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 325987200000,
+ :value 6.10740255045301,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 328665600000,
+ :value 6.459227514512193,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 331257600000,
+ :value 6.920153883242627,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 333936000000,
+ :value 7.303230591916083,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 336614400000,
+ :value 7.523301781206837,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 339206400000,
+ :value 7.600255883116875,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 341884800000,
+ :value 7.565186318322449,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 344476800000,
+ :value 7.4888443367265545,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 347155200000,
+ :value 7.349881966520776,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 349833600000,
+ :value 7.237117651819917,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 352252800000,
+ :value 7.16709348275742,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 354931200000,
+ :value 7.063627273345542,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 357523200000,
+ :value 6.991961923078254,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 360201600000,
+ :value 6.969437434131721,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 362793600000,
+ :value 6.973616114653043,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 365472000000,
+ :value 6.9825131661939706,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 368150400000,
+ :value 6.937945282741092,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 370742400000,
+ :value 6.87314015934656,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 373420800000,
+ :value 6.885047767409185,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 376012800000,
+ :value 6.998917868825799,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 378691200000,
+ :value 7.195018457864705,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 381369600000,
+ :value 7.459889607895349,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 383788800000,
+ :value 7.760317323341852,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 386467200000,
+ :value 8.115504364970974,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 389059200000,
+ :value 8.337012892438018,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 391737600000,
+ :value 8.47289443771552,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 394329600000,
+ :value 8.63393098847132,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 397008000000,
+ :value 8.880343104421385,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 399686400000,
+ :value 9.299166389450214,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 402278400000,
+ :value 9.672332739136621,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 404956800000,
+ :value 9.972362290172462,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 407548800000,
+ :value 10.135440244838035,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 410227200000,
+ :value 10.192799748272318,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 412905600000,
+ :value 10.33272914073776,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 415324800000,
+ :value 10.374250622161881,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 418003200000,
+ :value 10.863220768046986,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 420595200000,
+ :value 10.633623690997604,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 423273600000,
+ :value 10.398227314611589,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 425865600000,
+ :value 10.144903202972628,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 428544000000,
+ :value 9.692071551482954,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 431222400000,
+ :value 9.438564894803385,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 433814400000,
+ :value 9.287419126283547,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 436492800000,
+ :value 9.152012044104229,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 439084800000,
+ :value 8.96775702536172,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 441763200000,
+ :value 8.700734555207497,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 444441600000,
+ :value 8.499341595133174,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 446947200000,
+ :value 8.3105416907893,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 449625600000,
+ :value 8.087781467548986,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 452217600000,
+ :value 7.8699438671463255,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 454896000000,
+ :value 7.642221945811201,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 457488000000,
+ :value 7.458187070723678,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 460166400000,
+ :value 7.430617628753467,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 462844800000,
+ :value 7.35932749938997,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 465436800000,
+ :value 7.313923104125564,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 468115200000,
+ :value 7.225133745290318,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 470707200000,
+ :value 7.129031053124409,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 473385600000,
+ :value 7.094970042483633,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 476064000000,
+ :value 7.035365993075187,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 478483200000,
+ :value 7.005940238454545,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 481161600000,
+ :value 6.943264148674086,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 483753600000,
+ :value 6.849415285263028,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 486432000000,
+ :value 6.84731920920718,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 489024000000,
+ :value 6.881826647181532,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 491702400000,
+ :value 6.949257162962558,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 494380800000,
+ :value 7.011579403462015,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 496972800000,
+ :value 6.992594260667807,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 499651200000,
+ :value 6.933194727528974,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 502243200000,
+ :value 6.864927986707233,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 504921600000,
+ :value 6.8177183455054875,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 507600000000,
+ :value 6.792041066095369,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 510019200000,
+ :value 6.79056395651775,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 512697600000,
+ :value 6.800978874411329,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 515289600000,
+ :value 6.834584785373465,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 517968000000,
+ :value 6.903839330648534,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 520560000000,
+ :value 7.010949410709548,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 523238400000,
+ :value 7.094379786000992,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 525916800000,
+ :value 7.124898134579772,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 528508800000,
+ :value 7.137612817460077,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 531187200000,
+ :value 7.080721392394413,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 533779200000,
+ :value 6.993675385448665,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 536457600000,
+ :value 6.865123216101601,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 539136000000,
+ :value 6.754905735151585,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 541555200000,
+ :value 6.7164137037542435,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 544233600000,
+ :value 6.676172202799425,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 546825600000,
+ :value 6.653571446788163,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 549504000000,
+ :value 6.558719258050122,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 552096000000,
+ :value 6.442202521109319,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 554774400000,
+ :value 6.334787410106298,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 557452800000,
+ :value 6.264393818920489,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 560044800000,
+ :value 6.189807756673402,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 562723200000,
+ :value 6.160588831312947,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 565315200000,
+ :value 6.164744286550268,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 567993600000,
+ :value 6.197215672366111,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 570672000000,
+ :value 6.225990669112795,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 573177600000,
+ :value 6.169141025803825,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 575856000000,
+ :value 6.051724675347764,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 578448000000,
+ :value 5.9350055375425885,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 581126400000,
+ :value 5.919638255814456,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 583718400000,
+ :value 5.908205226627957,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 586396800000,
+ :value 5.856555286413659,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 589075200000,
+ :value 5.763685662657714,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 591667200000,
+ :value 5.710261998133074,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 594345600000,
+ :value 5.710612718145749,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 596937600000,
+ :value 5.6860679933533635,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 599616000000,
+ :value 5.609692731399598,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 602294400000,
+ :value 5.496670257130148,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 604713600000,
+ :value 5.412330752063093,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 607392000000,
+ :value 5.374197659514647,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 609984000000,
+ :value 5.383949321934298,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 612662400000,
+ :value 5.3664884037464,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 615254400000,
+ :value 5.268876824102925,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 617932800000,
+ :value 5.13824587700023,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 620611200000,
+ :value 4.97266890999812,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 623203200000,
+ :value 4.884949295637989,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 625881600000,
+ :value 4.892601206631116,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 628473600000,
+ :value 4.962369915619025,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 631152000000,
+ :value 5.064054241346124,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 633830400000,
+ :value 5.105625628840301,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 636249600000,
+ :value 5.095564672241849,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 638928000000,
+ :value 5.088721798128107,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 641520000000,
+ :value 5.117498324061096,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 644198400000,
+ :value 5.236455532425811,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 646790400000,
+ :value 5.347066836414623,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 649468800000,
+ :value 5.471275978210834,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 652147200000,
+ :value 5.590910223454795,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 654739200000,
+ :value 5.6918447635528615,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 657417600000,
+ :value 5.797562928606464,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 660009600000,
+ :value 5.892037971032792,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 662688000000,
+ :value 6.0647170218841,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 665366400000,
+ :value 6.282373594403438,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 667785600000,
+ :value 6.432747016684303,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 670464000000,
+ :value 6.5639603303903655,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 673056000000,
+ :value 6.678907257693272,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 675734400000,
+ :value 6.821558857983106,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 678326400000,
+ :value 6.98937646253524,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 681004800000,
+ :value 7.057762359562805,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 683683200000,
+ :value 7.147201319339912,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 686275200000,
+ :value 7.257967246321314,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 688953600000,
+ :value 7.495175139862027,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 691545600000,
+ :value 7.777490651311922,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 694224000000,
+ :value 8.007610888648777,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 696902400000,
+ :value 8.193415232874258,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 699408000000,
+ :value 8.3511070788484,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 702086400000,
+ :value 8.514008762562788,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 704678400000,
+ :value 8.624237207480242,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 707356800000,
+ :value 8.686818423625848,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 709948800000,
+ :value 8.697609016069856,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 712627200000,
+ :value 8.71331742258056,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 715305600000,
+ :value 8.80170551522248,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 717897600000,
+ :value 8.905662282946693,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 720576000000,
+ :value 8.964687175147924,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 723168000000,
+ :value 8.880808527429416,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 725846400000,
+ :value 8.742794307235684,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 728524800000,
+ :value 8.570578275794986,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 730944000000,
+ :value 8.449852296705693,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 733622400000,
+ :value 8.350902377601823,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 736214400000,
+ :value 8.282371369774626,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 738892800000,
+ :value 8.227016244108622,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 741484800000,
+ :value 8.226071350611184,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 744163200000,
+ :value 8.216763144899083,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 746841600000,
+ :value 8.192890460880138,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 749433600000,
+ :value 8.21174591963221,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 752112000000,
+ :value 8.260083671327937,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 754704000000,
+ :value 8.429187942170394,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 757382400000,
+ :value 8.714692127298235,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 760060800000,
+ :value 8.965667597494928,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 762480000000,
+ :value 9.131215297490275,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 765158400000,
+ :value 9.204148328790184,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 767750400000,
+ :value 9.188148869471966,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 770428800000,
+ :value 9.133972133369898,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 773020800000,
+ :value 9.090373744104319,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 775699200000,
+ :value 9.063002847386713,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 778377600000,
+ :value 9.058136483385754,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 780969600000,
+ :value 9.018498354626946,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 783648000000,
+ :value 8.894253215543117,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 786240000000,
+ :value 8.635626741361776,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 788918400000,
+ :value 8.38761074093054,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 791596800000,
+ :value 8.235704972256404,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 794016000000,
+ :value 8.23105586575669,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 796694400000,
+ :value 8.243127847146617,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 799286400000,
+ :value 8.257796369451208,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 801964800000,
+ :value 8.291277947566758,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 804556800000,
+ :value 8.294945267274358,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 807235200000,
+ :value 8.244606349650986,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 809913600000,
+ :value 8.162122014675177,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 812505600000,
+ :value 8.103729282710292,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 815184000000,
+ :value 8.152379198575366,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 817776000000,
+ :value 8.190240736238795,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 820454400000,
+ :value 8.197122128585239,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 823132800000,
+ :value 8.257992250686277,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 825638400000,
+ :value 8.325040430129867,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 828316800000,
+ :value 8.43319718007822,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 830908800000,
+ :value 8.462334772048369,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 833587200000,
+ :value 8.416428720174444,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 836179200000,
+ :value 8.37254802222049,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 838857600000,
+ :value 8.378552694251333,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 841536000000,
+ :value 8.327951091563872,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 844128000000,
+ :value 8.170181154520918,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 846806400000,
+ :value 7.986987479534861,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 849398400000,
+ :value 7.860018453621068,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 852076800000,
+ :value 7.874635548736386,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 854755200000,
+ :value 7.963924973763,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 857174400000,
+ :value 8.04521469749585,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 859852800000,
+ :value 8.062095981474892,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 862444800000,
+ :value 8.084596388707366,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 865123200000,
+ :value 8.075666877084291,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 867715200000,
+ :value 8.04493486625329,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 870393600000,
+ :value 8.022348741340792,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 873072000000,
+ :value 7.9007379612210755,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 875664000000,
+ :value 7.779873955689212,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 878342400000,
+ :value 7.631912478769429,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 880934400000,
+ :value 7.472528039167969,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 883612800000,
+ :value 7.279137670824198,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 886291200000,
+ :value 7.0632469644179565,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 888710400000,
+ :value 6.853879195258898,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 891388800000,
+ :value 6.776537460604617,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 893980800000,
+ :value 6.770860797529749,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 896659200000,
+ :value 6.772370969282605,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 899251200000,
+ :value 6.788138922570754,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 901929600000,
+ :value 6.745684575319064,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 904608000000,
+ :value 6.706292846750106,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 907200000000,
+ :value 6.692570232528859,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 909878400000,
+ :value 6.701983530276387,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 912470400000,
+ :value 6.749371189887068,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 915148800000,
+ :value 6.807506096653431,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 917827200000,
+ :value 6.7694375543596195,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 920246400000,
+ :value 6.649171356338783,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 922924800000,
+ :value 6.52576471786135,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 925516800000,
+ :value 6.370025160971714,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 928195200000,
+ :value 6.27320212099815,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 930787200000,
+ :value 6.226182968048015,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 933465600000,
+ :value 6.140768292612211,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 936144000000,
+ :value 6.139129450714968,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 938736000000,
+ :value 6.096542439284509,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 941414400000,
+ :value 6.00765434664882,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 944006400000,
+ :value 5.959816958509094,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 946684800000,
+ :value 5.936426699722345,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 949363200000,
+ :value 5.968266612024998,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 951868800000,
+ :value 6.009911354402201,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 954547200000,
+ :value 5.955328805608147,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 957139200000,
+ :value 5.8931203089017465,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 959817600000,
+ :value 5.902930458715073,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 962409600000,
+ :value 6.020631584219288,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 965088000000,
+ :value 6.106315180778527,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 967766400000,
+ :value 6.146007433670785,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 970358400000,
+ :value 6.134126797510444,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 973036800000,
+ :value 6.057153425609346,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 975628800000,
+ :value 6.0004042375557916,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 978307200000,
+ :value 6.024851369901638,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 980985600000,
+ :value 6.071061252677708,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 983404800000,
+ :value 6.119198636847649,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 986083200000,
+ :value 6.1762506111169655,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 988675200000,
+ :value 6.206566243717823,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 991353600000,
+ :value 6.419741782083477,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 993945600000,
+ :value 6.649620458583783,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 996624000000,
+ :value 6.918665078816474,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 999302400000,
+ :value 7.161211774371068,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1001894400000,
+ :value 7.425383853530818,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1004572800000,
+ :value 7.748525005293857,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1007164800000,
+ :value 8.039239865267504,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1009843200000,
+ :value 8.249310802126004,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1012521600000,
+ :value 8.411243565781078,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1014940800000,
+ :value 8.6085421377134,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1017619200000,
+ :value 8.968789610178987,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1020211200000,
+ :value 9.184632725767003,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1022889600000,
+ :value 9.146021247288722,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1025481600000,
+ :value 9.135110551889616,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1028160000000,
+ :value 9.108282604576331,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1030838400000,
+ :value 9.32201869855944,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1033430400000,
+ :value 9.43904352994482,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1036108800000,
+ :value 9.510505716091462,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1038700800000,
+ :value 9.518774909339387,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1041379200000,
+ :value 9.559603231934553,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1044057600000,
+ :value 9.663545224029207,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1046476800000,
+ :value 9.780613342539723,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1049155200000,
+ :value 9.925636780819616,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1051747200000,
+ :value 10.057118472857734,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1054425600000,
+ :value 10.118264905190015,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1057017600000,
+ :value 10.15315873858993,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1059696000000,
+ :value 10.216159540515989,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1062374400000,
+ :value 10.24518739462991,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1064966400000,
+ :value 10.29170051316049,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1067644800000,
+ :value 10.369012951821144,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1070236800000,
+ :value 10.398927923166063,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1072915200000,
+ :value 10.363467728188336,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1075593600000,
+ :value 10.263287173265326,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1078099200000,
+ :value 10.086666316788481,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1080777600000,
+ :value 9.935853559723519,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1083369600000,
+ :value 9.77917850276308,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1086048000000,
+ :value 9.576461382854546,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1088640000000,
+ :value 9.466731109980849,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1091318400000,
+ :value 9.23999655401333,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1093996800000,
+ :value 9.430098150033885,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1096588800000,
+ :value 9.541317456975595,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1099267200000,
+ :value 9.554135544534462,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1101859200000,
+ :value 9.496393459372158,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1104537600000,
+ :value 9.395042939232788,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1107216000000,
+ :value 9.282705337651315,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1109635200000,
+ :value 9.190212852622942,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1112313600000,
+ :value 9.12234380624312,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1114905600000,
+ :value 9.040434450460676,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1117584000000,
+ :value 8.978475979019162,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1120176000000,
+ :value 8.904689817716843,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1122854400000,
+ :value 8.765393186997656,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1125532800000,
+ :value 8.674132745542785,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1128124800000,
+ :value 8.578189172258343,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1130803200000,
+ :value 8.580371613086536,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1133395200000,
+ :value 8.638717826653032,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1136073600000,
+ :value 8.719188730337066,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1138752000000,
+ :value 8.708247398433853,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1141171200000,
+ :value 8.664596172568572,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1143849600000,
+ :value 8.542543607882351,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1146441600000,
+ :value 8.376988945466287,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1149120000000,
+ :value 8.273917311048592,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1151712000000,
+ :value 8.198210933381088,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1154390400000,
+ :value 8.097182536726795,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1157068800000,
+ :value 8.080191492691217,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1159660800000,
+ :value 8.076502117884036,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1162339200000,
+ :value 8.134178821480461,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1164931200000,
+ :value 8.24546879900803,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1167609600000,
+ :value 8.366728564302555,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1170288000000,
+ :value 8.491300915637943,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1172707200000,
+ :value 8.527358131171471,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1175385600000,
+ :value 8.484674412083606,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1177977600000,
+ :value 8.453489605440275,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1180656000000,
+ :value 8.526663019070398,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1183248000000,
+ :value 8.619237453035744,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1185926400000,
+ :value 8.71593120907665,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1188604800000,
+ :value 8.642136639217703,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1191196800000,
+ :value 8.573610354637957,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1193875200000,
+ :value 8.546825204643628,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1196467200000,
+ :value 8.62443997177995,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1199145600000,
+ :value 8.679087987128796,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1201824000000,
+ :value 8.757690176394684,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1204329600000,
+ :value 8.827746085967682,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1207008000000,
+ :value 8.902179352158285,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1209600000000,
+ :value 9.063191313035247,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1212278400000,
+ :value 9.215099037746057,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1214870400000,
+ :value 9.461205192694848,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1217548800000,
+ :value 9.81973662159507,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1220227200000,
+ :value 10.088412178219912,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1222819200000,
+ :value 10.236973144314028,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1225497600000,
+ :value 10.384196795648428,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1228089600000,
+ :value 10.568676264821903,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1230768000000,
+ :value 11.002045998920664,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1233446400000,
+ :value 11.65969696522501,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1235865600000,
+ :value 12.356968759455526,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1238544000000,
+ :value 13.229634010613779,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1241136000000,
+ :value 14.131914618225494,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1243814400000,
+ :value 15.065243097005123,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1246406400000,
+ :value 15.942266946185384,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1249084800000,
+ :value 16.86836731042763,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1251763200000,
+ :value 17.836887302120772,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1254355200000,
+ :value 18.7421333949643,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1257033600000,
+ :value 19.413528794588217,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1259625600000,
+ :value 19.858115822576536,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1262304000000,
+ :value 20.0278223383089,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1264982400000,
+ :value 20.47499569372343,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1267401600000,
+ :value 21.0135838000636,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1270080000000,
+ :value 21.66788613726908,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1272672000000,
+ :value 22.175556319657417,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1275350400000,
+ :value 22.27032189505079,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1277942400000,
+ :value 22.23018547447564,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1280620800000,
+ :value 21.898977685036385,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1283299200000,
+ :value 21.54576632683333,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1285891200000,
+ :value 21.139988154759457,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1288569600000,
+ :value 21.234396532404702,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1291161600000,
+ :value 21.300451359702574,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1293840000000,
+ :value 21.361933535665266,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1296518400000,
+ :value 21.370328496424705,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1298937600000,
+ :value 21.36568409969872,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1301616000000,
+ :value 21.496210527833696,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1304208000000,
+ :value 21.676271499131218,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1306886400000,
+ :value 21.87995633847838,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1309478400000,
+ :value 22.079302352460793,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1312156800000,
+ :value 22.127473547458145,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1314835200000,
+ :value 21.79680437392551,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1317427200000,
+ :value 21.414474251907905,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1320105600000,
+ :value 20.904854745870324,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1322697600000,
+ :value 20.492039265756176,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1325376000000,
+ :value 20.097186796415144,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1328054400000,
+ :value 19.70519068793132,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1330560000000,
+ :value 19.484788376185747,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1333238400000,
+ :value 19.535885547295976,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1335830400000,
+ :value 19.829746387056105,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1338508800000,
+ :value 19.27299635484775,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1341100800000,
+ :value 19.00643118138936,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1343779200000,
+ :value 18.400000000013307,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1346457600000,
+ :value 18.620923892001912,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1349049600000,
+ :value 18.496122901068503,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1351728000000,
+ :value 18.275507372984833,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1354320000000,
+ :value 17.932999569459923,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1356998400000,
+ :value 17.605895716336533,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1359676800000,
+ :value 17.381923627584783,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1362096000000,
+ :value 17.268897046446213,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1364774400000,
+ :value 17.19981763737311,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1367366400000,
+ :value 17.055938065588748,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1370044800000,
+ :value 16.837718478004007,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1372636800000,
+ :value 16.680807980667268,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1375315200000,
+ :value 16.512845787015067,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1377993600000,
+ :value 16.518355347948813,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1380585600000,
+ :value 16.70139205156866,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1383264000000,
+ :value 17.01006601765394,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1385856000000,
+ :value 16.5907100540623,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1388534400000,
+ :value 16.341192234501477,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1391212800000,
+ :value 15.899161965471023,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1393632000000,
+ :value 15.682796867466806,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1396310400000,
+ :value 15.167350670927021,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1398902400000,
+ :value 14.589504803220791,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1401580800000,
+ :value 13.884172841569637,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1404172800000,
+ :value 13.464368887231359,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1406851200000,
+ :value 13.292110514886405,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1409529600000,
+ :value 13.257211339817065,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1412121600000,
+ :value 13.24029328906061,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1414800000000,
+ :value 13.150394963922182,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1417392000000,
+ :value 13.041696558520094,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1420070400000,
+ :value 12.855258980625692,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1422748800000,
+ :value 12.55271918276847,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1425168000000,
+ :value 12.198521720812153,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1427846400000,
+ :value 11.8280205379845,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1430438400000,
+ :value 11.667352047397204,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1433116800000,
+ :value 11.667504583302426,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1435708800000,
+ :value 11.63197057928511,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1438387200000,
+ :value 11.539892334252187,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1441065600000,
+ :value 11.406522949793427,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1443657600000,
+ :value 11.231900399437137,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1446336000000,
+ :value 11.13937006993702,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1448928000000,
+ :value 11.137526090403245,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1451606400000,
+ :value 11.193312187202814,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1454284800000,
+ :value 11.250388357130007,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1456790400000,
+ :value 11.19453214551352,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1459468800000,
+ :value 11.042905320350215,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1462060800000,
+ :value 10.923819157845514,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1464739200000,
+ :value 10.858250521311513,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1467331200000,
+ :value 10.773074651973218,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1470009600000,
+ :value 10.609052339090397,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1472688000000,
+ :value 10.401993432349357,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1475280000000,
+ :value 10.290081624819997,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1477958400000,
+ :value 10.307121564483182,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1480550400000,
+ :value 10.33509915230063,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1483228800000,
+ :value 10.316010662559293,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1485907200000,
+ :value 10.227409130870527,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1488326400000,
+ :value 10.167400602160322,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1491004800000,
+ :value 10.177770294578796,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1493596800000,
+ :value 10.149178815217034,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1496275200000,
+ :value 10.177788697412224,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1498867200000,
+ :value 10.18413416146037,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1501545600000,
+ :value 10.132752826528808,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1504224000000,
+ :value 10.027048469932922,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1506816000000,
+ :value 9.854047222004496,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1509494400000,
+ :value 9.673136513137237,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1512086400000,
+ :value 9.577373021170537,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1514764800000,
+ :value 9.438139987854498,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1517443200000,
+ :value 9.363226689994832,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1519862400000,
+ :value 9.329488178577403,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1522540800000,
+ :value 9.249704260757435,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1525132800000,
+ :value 9.253355183510003,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1527811200000,
+ :value 9.277073778268742,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1530403200000,
+ :value 9.27370943623107,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1533081600000,
+ :value 9.319355338297688,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1535760000000,
+ :value 9.29551116258613,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1538352000000,
+ :value 9.267311863891322,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1541030400000,
+ :value 9.30182223729744,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1543622400000,
+ :value 9.287050457034304,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1546300800000,
+ :value 9.298141458414204,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1548979200000,
+ :value 9.233687058662184,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1551398400000,
+ :value 9.135370287630309,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1554076800000,
+ :value 9.084538672235638,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1556668800000,
+ :value 9.078895885500927,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1559347200000,
+ :value 9.080107397798624,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1561939200000,
+ :value 9.128127693211697,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1564617600000,
+ :value 9.183265058404388,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1567296000000,
+ :value 9.264164690923423,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1569888000000,
+ :value 9.395640551798735,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1572566400000,
+ :value 9.492835175090875,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1575158400000,
+ :value 9.59252326851778,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1577836800000,
+ :value 9.700385293561958,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1580515200000,
+ :value 9.801354214999726,
+ :label "UEMPMED-loess"}
+^{}
+{"DATE" 1583020800000,
+ :value 9.895649494613089,
+ :label "UEMPMED-loess"}]}]}]}
+           {:out "",
+            :id :1b8bc22b-553f-4b53-8f53-be1de1df80b5,
+            :code "(ds/select (ds/->dataset \"https://vega.github.io/vega/data/stocks.csv\")\n           :all (range 5))",
+            :ns "studio.notebook.ds-vega2",
+            :hiccup [:span.text-blue-500
+                     "techml dataset "
+                     [user/text
+                      "https://vega.github.io/vega/data/stocks.csv [5 3]:\n\n| symbol |       date | price |\n|--------|------------|------:|\n|   MSFT | 2000-01-01 | 39.81 |\n|   MSFT | 2000-02-01 | 36.35 |\n|   MSFT | 2000-03-01 | 43.22 |\n|   MSFT | 2000-04-01 | 28.37 |\n|   MSFT | 2000-05-01 | 25.45 |\n"]]}
+           {:out "",
+            :id :bbd806e0-a1d8-4140-af42-b3c954d4020e,
+            :code "(as-> (ds/->dataset \"https://vega.github.io/vega/data/stocks.csv\") ds\n      ;;The time series chart expects time in epoch milliseconds\n  (ds/add-or-update-column ds \"year\" (dtype-dt-ops/long-temporal-field :years (ds \"date\")))\n  (ds/filter-column ds \"year\" #{2007 2008 2009})\n  (ds/update-column ds \"date\" dtype-dt-ops/datetime->milliseconds)\n  \n  (ds/mapseq-reader ds)\n\t  ;;all graphing functions run from pure clojure data.  No batteries required.\n  (vega/time-series ds \"date\" \"price\"\n                    {:title \"Stock Price (2007-2010)\"\n                     :label-key \"symbol\"\n                     :background \"white\"})\n  (show-vega ds)\n  )",
+            :ns "studio.notebook.ds-vega2",
+            :hiccup ^{:R true}
+                    [ui.vega/vega
+                     {:autosize {:type "fit",
+                                 :resize true,
+                                 :contains "padding"},
+                      :legends [{:type :symbol,
+                                 :fill "color",
+                                 :orient "right"}],
+                      :axes [{:orient "bottom",
+                              :scale "x",
+                              :title "date"}
+                             {:orient "left",
+                              :scale "y",
+                              :title "price"}],
+                      :width 800,
+                      :background "white",
+                      :scales ({:domain [1.1676096E12
+                                         1.2596256E12],
+                                :name "x",
+                                :range "width",
+                                :type "utc"}
+                               {:zero true,
+                                :name "y",
+                                :type "linear",
+                                :round true,
+                                :nice true,
+                                :domain [15.81 707.0],
+                                :range "height"}
+                               {:name "color",
+                                :type "ordinal",
+                                :domain ["GOOG"
+                                         "AAPL"
+                                         "AMZN"
+                                         "MSFT"
+                                         "IBM"],
+                                :range {:scheme "tableau10"}}),
+                      :title "Stock Price (2007-2010)",
+                      :label-key "symbol",
+                      :marks [{:encode {:enter {:stroke {:scale "color",
+                                                         :field "symbol"},
+                                                :strokeWidth {:value 2},
+                                                :x {:field "date",
+                                                    :scale "x"},
+                                                :y {:field "price",
+                                                    :scale "y"}}},
+                               :from {:data "MSFT"},
+                               :type "line"}
+                              {:encode {:enter {:stroke {:scale "color",
+                                                         :field "symbol"},
+                                                :strokeWidth {:value 2},
+                                                :x {:field "date",
+                                                    :scale "x"},
+                                                :y {:field "price",
+                                                    :scale "y"}}},
+                               :from {:data "AMZN"},
+                               :type "line"}
+                              {:encode {:enter {:stroke {:scale "color",
+                                                         :field "symbol"},
+                                                :strokeWidth {:value 2},
+                                                :x {:field "date",
+                                                    :scale "x"},
+                                                :y {:field "price",
+                                                    :scale "y"}}},
+                               :from {:data "IBM"},
+                               :type "line"}
+                              {:encode {:enter {:stroke {:scale "color",
+                                                         :field "symbol"},
+                                                :strokeWidth {:value 2},
+                                                :x {:field "date",
+                                                    :scale "x"},
+                                                :y {:field "price",
+                                                    :scale "y"}}},
+                               :from {:data "GOOG"},
+                               :type "line"}
+                              {:encode {:enter {:stroke {:scale "color",
+                                                         :field "symbol"},
+                                                :strokeWidth {:value 2},
+                                                :x {:field "date",
+                                                    :scale "x"},
+                                                :y {:field "price",
+                                                    :scale "y"}}},
+                               :from {:data "AAPL"},
+                               :type "line"}],
+                      :$schema "https://vega.github.io/schema/vega/v5.json",
+                      :height 450,
+                      :data [{:name "MSFT",
+                              :values [^{}
+                                       {"date" 1.1676096E12,
+                                        "price" 29.07,
+                                        "symbol" "MSFT"}
+^{}
+{"date" 1.170288E12, "price" 26.63, "symbol" "MSFT"}
+^{}
+{"date" 1.1727072E12, "price" 26.35, "symbol" "MSFT"}
+^{}
+{"date" 1.1753856E12, "price" 28.3, "symbol" "MSFT"}
+^{}
+{"date" 1.1779776E12, "price" 29.11, "symbol" "MSFT"}
+^{}
+{"date" 1.180656E12, "price" 27.95, "symbol" "MSFT"}
+^{}
+{"date" 1.183248E12, "price" 27.5, "symbol" "MSFT"}
+^{}
+{"date" 1.1859264E12, "price" 27.34, "symbol" "MSFT"}
+^{}
+{"date" 1.1886048E12, "price" 28.04, "symbol" "MSFT"}
+^{}
+{"date" 1.1911968E12, "price" 35.03, "symbol" "MSFT"}
+^{}
+{"date" 1.1938752E12, "price" 32.09, "symbol" "MSFT"}
+^{}
+{"date" 1.1964672E12, "price" 34.0, "symbol" "MSFT"}
+^{}
+{"date" 1.1991456E12, "price" 31.13, "symbol" "MSFT"}
+^{}
+{"date" 1.201824E12, "price" 26.07, "symbol" "MSFT"}
+^{}
+{"date" 1.2043296E12, "price" 27.21, "symbol" "MSFT"}
+^{}
+{"date" 1.207008E12, "price" 27.34, "symbol" "MSFT"}
+^{}
+{"date" 1.2096E12, "price" 27.25, "symbol" "MSFT"}
+^{}
+{"date" 1.2122784E12, "price" 26.47, "symbol" "MSFT"}
+^{}
+{"date" 1.2148704E12, "price" 24.75, "symbol" "MSFT"}
+^{}
+{"date" 1.2175488E12, "price" 26.36, "symbol" "MSFT"}
+^{}
+{"date" 1.2202272E12, "price" 25.78, "symbol" "MSFT"}
+^{}
+{"date" 1.2228192E12, "price" 21.57, "symbol" "MSFT"}
+^{}
+{"date" 1.2254976E12, "price" 19.66, "symbol" "MSFT"}
+^{}
+{"date" 1.2280896E12, "price" 18.91, "symbol" "MSFT"}
+^{}
+{"date" 1.230768E12, "price" 16.63, "symbol" "MSFT"}
+^{}
+{"date" 1.2334464E12, "price" 15.81, "symbol" "MSFT"}
+^{}
+{"date" 1.2358656E12, "price" 17.99, "symbol" "MSFT"}
+^{}
+{"date" 1.238544E12, "price" 19.84, "symbol" "MSFT"}
+^{}
+{"date" 1.241136E12, "price" 20.59, "symbol" "MSFT"}
+^{}
+{"date" 1.2438144E12, "price" 23.42, "symbol" "MSFT"}
+^{}
+{"date" 1.2464064E12, "price" 23.18, "symbol" "MSFT"}
+^{}
+{"date" 1.2490848E12, "price" 24.43, "symbol" "MSFT"}
+^{}
+{"date" 1.2517632E12, "price" 25.49, "symbol" "MSFT"}
+^{}
+{"date" 1.2543552E12, "price" 27.48, "symbol" "MSFT"}
+^{}
+{"date" 1.2570336E12, "price" 29.27, "symbol" "MSFT"}
+^{}
+{"date" 1.2596256E12, "price" 30.34, "symbol" "MSFT"}]}
+                             {:name "AMZN",
+                              :values [^{}
+                                       {"date" 1.1676096E12,
+                                        "price" 37.67,
+                                        "symbol" "AMZN"}
+^{}
+{"date" 1.170288E12, "price" 39.14, "symbol" "AMZN"}
+^{}
+{"date" 1.1727072E12, "price" 39.79, "symbol" "AMZN"}
+^{}
+{"date" 1.1753856E12, "price" 61.33, "symbol" "AMZN"}
+^{}
+{"date" 1.1779776E12, "price" 69.14, "symbol" "AMZN"}
+^{}
+{"date" 1.180656E12, "price" 68.41, "symbol" "AMZN"}
+^{}
+{"date" 1.183248E12, "price" 78.54, "symbol" "AMZN"}
+^{}
+{"date" 1.1859264E12, "price" 79.91, "symbol" "AMZN"}
+^{}
+{"date" 1.1886048E12, "price" 93.15, "symbol" "AMZN"}
+^{}
+{"date" 1.1911968E12, "price" 89.15, "symbol" "AMZN"}
+^{}
+{"date" 1.1938752E12, "price" 90.56, "symbol" "AMZN"}
+^{}
+{"date" 1.1964672E12, "price" 92.64, "symbol" "AMZN"}
+^{}
+{"date" 1.1991456E12, "price" 77.7, "symbol" "AMZN"}
+^{}
+{"date" 1.201824E12, "price" 64.47, "symbol" "AMZN"}
+^{}
+{"date" 1.2043296E12, "price" 71.3, "symbol" "AMZN"}
+^{}
+{"date" 1.207008E12, "price" 78.63, "symbol" "AMZN"}
+^{}
+{"date" 1.2096E12, "price" 81.62, "symbol" "AMZN"}
+^{}
+{"date" 1.2122784E12, "price" 73.33, "symbol" "AMZN"}
+^{}
+{"date" 1.2148704E12, "price" 76.34, "symbol" "AMZN"}
+^{}
+{"date" 1.2175488E12, "price" 80.81, "symbol" "AMZN"}
+^{}
+{"date" 1.2202272E12, "price" 72.76, "symbol" "AMZN"}
+^{}
+{"date" 1.2228192E12, "price" 57.24, "symbol" "AMZN"}
+^{}
+{"date" 1.2254976E12, "price" 42.7, "symbol" "AMZN"}
+^{}
+{"date" 1.2280896E12, "price" 51.28, "symbol" "AMZN"}
+^{}
+{"date" 1.230768E12, "price" 58.82, "symbol" "AMZN"}
+^{}
+{"date" 1.2334464E12, "price" 64.79, "symbol" "AMZN"}
+^{}
+{"date" 1.2358656E12, "price" 73.44, "symbol" "AMZN"}
+^{}
+{"date" 1.238544E12, "price" 80.52, "symbol" "AMZN"}
+^{}
+{"date" 1.241136E12, "price" 77.99, "symbol" "AMZN"}
+^{}
+{"date" 1.2438144E12, "price" 83.66, "symbol" "AMZN"}
+^{}
+{"date" 1.2464064E12, "price" 85.76, "symbol" "AMZN"}
+^{}
+{"date" 1.2490848E12, "price" 81.19, "symbol" "AMZN"}
+^{}
+{"date" 1.2517632E12, "price" 93.36, "symbol" "AMZN"}
+^{}
+{"date" 1.2543552E12, "price" 118.81, "symbol" "AMZN"}
+^{}
+{"date" 1.2570336E12, "price" 135.91, "symbol" "AMZN"}
+^{}
+{"date" 1.2596256E12, "price" 134.52, "symbol" "AMZN"}]}
+                             {:name "IBM",
+                              :values [^{}
+                                       {"date" 1.1676096E12,
+                                        "price" 93.79,
+                                        "symbol" "IBM"}
+^{}
+{"date" 1.170288E12, "price" 88.18, "symbol" "IBM"}
+^{}
+{"date" 1.1727072E12, "price" 89.44, "symbol" "IBM"}
+^{}
+{"date" 1.1753856E12, "price" 96.98, "symbol" "IBM"}
+^{}
+{"date" 1.1779776E12, "price" 101.54, "symbol" "IBM"}
+^{}
+{"date" 1.180656E12, "price" 100.25, "symbol" "IBM"}
+^{}
+{"date" 1.183248E12, "price" 105.4, "symbol" "IBM"}
+^{}
+{"date" 1.1859264E12, "price" 111.54, "symbol" "IBM"}
+^{}
+{"date" 1.1886048E12, "price" 112.6, "symbol" "IBM"}
+^{}
+{"date" 1.1911968E12, "price" 111.0, "symbol" "IBM"}
+^{}
+{"date" 1.1938752E12, "price" 100.9, "symbol" "IBM"}
+^{}
+{"date" 1.1964672E12, "price" 103.7, "symbol" "IBM"}
+^{}
+{"date" 1.1991456E12, "price" 102.75, "symbol" "IBM"}
+^{}
+{"date" 1.201824E12, "price" 109.64, "symbol" "IBM"}
+^{}
+{"date" 1.2043296E12, "price" 110.87, "symbol" "IBM"}
+^{}
+{"date" 1.207008E12, "price" 116.23, "symbol" "IBM"}
+^{}
+{"date" 1.2096E12, "price" 125.14, "symbol" "IBM"}
+^{}
+{"date" 1.2122784E12, "price" 114.6, "symbol" "IBM"}
+^{}
+{"date" 1.2148704E12, "price" 123.74, "symbol" "IBM"}
+^{}
+{"date" 1.2175488E12, "price" 118.16, "symbol" "IBM"}
+^{}
+{"date" 1.2202272E12, "price" 113.53, "symbol" "IBM"}
+^{}
+{"date" 1.2228192E12, "price" 90.24, "symbol" "IBM"}
+^{}
+{"date" 1.2254976E12, "price" 79.65, "symbol" "IBM"}
+^{}
+{"date" 1.2280896E12, "price" 82.15, "symbol" "IBM"}
+^{}
+{"date" 1.230768E12, "price" 89.46, "symbol" "IBM"}
+^{}
+{"date" 1.2334464E12, "price" 90.32, "symbol" "IBM"}
+^{}
+{"date" 1.2358656E12, "price" 95.09, "symbol" "IBM"}
+^{}
+{"date" 1.238544E12, "price" 101.29, "symbol" "IBM"}
+^{}
+{"date" 1.241136E12, "price" 104.85, "symbol" "IBM"}
+^{}
+{"date" 1.2438144E12, "price" 103.01, "symbol" "IBM"}
+^{}
+{"date" 1.2464064E12, "price" 116.34, "symbol" "IBM"}
+^{}
+{"date" 1.2490848E12, "price" 117.0, "symbol" "IBM"}
+^{}
+{"date" 1.2517632E12, "price" 118.55, "symbol" "IBM"}
+^{}
+{"date" 1.2543552E12, "price" 119.54, "symbol" "IBM"}
+^{}
+{"date" 1.2570336E12, "price" 125.79, "symbol" "IBM"}
+^{}
+{"date" 1.2596256E12, "price" 130.32, "symbol" "IBM"}]}
+                             {:name "GOOG",
+                              :values [^{}
+                                       {"date" 1.1676096E12,
+                                        "price" 501.5,
+                                        "symbol" "GOOG"}
+^{}
+{"date" 1.170288E12, "price" 449.45, "symbol" "GOOG"}
+^{}
+{"date" 1.1727072E12, "price" 458.16, "symbol" "GOOG"}
+^{}
+{"date" 1.1753856E12, "price" 471.38, "symbol" "GOOG"}
+^{}
+{"date" 1.1779776E12, "price" 497.91, "symbol" "GOOG"}
+^{}
+{"date" 1.180656E12, "price" 522.7, "symbol" "GOOG"}
+^{}
+{"date" 1.183248E12, "price" 510.0, "symbol" "GOOG"}
+^{}
+{"date" 1.1859264E12, "price" 515.25, "symbol" "GOOG"}
+^{}
+{"date" 1.1886048E12, "price" 567.27, "symbol" "GOOG"}
+^{}
+{"date" 1.1911968E12, "price" 707.0, "symbol" "GOOG"}
+^{}
+{"date" 1.1938752E12, "price" 693.0, "symbol" "GOOG"}
+^{}
+{"date" 1.1964672E12, "price" 691.48, "symbol" "GOOG"}
+^{}
+{"date" 1.1991456E12, "price" 564.3, "symbol" "GOOG"}
+^{}
+{"date" 1.201824E12, "price" 471.18, "symbol" "GOOG"}
+^{}
+{"date" 1.2043296E12, "price" 440.47, "symbol" "GOOG"}
+^{}
+{"date" 1.207008E12, "price" 574.29, "symbol" "GOOG"}
+^{}
+{"date" 1.2096E12, "price" 585.8, "symbol" "GOOG"}
+^{}
+{"date" 1.2122784E12, "price" 526.42, "symbol" "GOOG"}
+^{}
+{"date" 1.2148704E12, "price" 473.75, "symbol" "GOOG"}
+^{}
+{"date" 1.2175488E12, "price" 463.29, "symbol" "GOOG"}
+^{}
+{"date" 1.2202272E12, "price" 400.52, "symbol" "GOOG"}
+^{}
+{"date" 1.2228192E12, "price" 359.36, "symbol" "GOOG"}
+^{}
+{"date" 1.2254976E12, "price" 292.96, "symbol" "GOOG"}
+^{}
+{"date" 1.2280896E12, "price" 307.65, "symbol" "GOOG"}
+^{}
+{"date" 1.230768E12, "price" 338.53, "symbol" "GOOG"}
+^{}
+{"date" 1.2334464E12, "price" 337.99, "symbol" "GOOG"}
+^{}
+{"date" 1.2358656E12, "price" 348.06, "symbol" "GOOG"}
+^{}
+{"date" 1.238544E12, "price" 395.97, "symbol" "GOOG"}
+^{}
+{"date" 1.241136E12, "price" 417.23, "symbol" "GOOG"}
+^{}
+{"date" 1.2438144E12, "price" 421.59, "symbol" "GOOG"}
+^{}
+{"date" 1.2464064E12, "price" 443.05, "symbol" "GOOG"}
+^{}
+{"date" 1.2490848E12, "price" 461.67, "symbol" "GOOG"}
+^{}
+{"date" 1.2517632E12, "price" 495.85, "symbol" "GOOG"}
+^{}
+{"date" 1.2543552E12, "price" 536.12, "symbol" "GOOG"}
+^{}
+{"date" 1.2570336E12, "price" 583.0, "symbol" "GOOG"}
+^{}
+{"date" 1.2596256E12, "price" 619.98, "symbol" "GOOG"}]}
+                             {:name "AAPL",
+                              :values [^{}
+                                       {"date" 1.1676096E12,
+                                        "price" 85.73,
+                                        "symbol" "AAPL"}
+^{}
+{"date" 1.170288E12, "price" 84.61, "symbol" "AAPL"}
+^{}
+{"date" 1.1727072E12, "price" 92.91, "symbol" "AAPL"}
+^{}
+{"date" 1.1753856E12, "price" 99.8, "symbol" "AAPL"}
+^{}
+{"date" 1.1779776E12, "price" 121.19, "symbol" "AAPL"}
+^{}
+{"date" 1.180656E12, "price" 122.04, "symbol" "AAPL"}
+^{}
+{"date" 1.183248E12, "price" 131.76, "symbol" "AAPL"}
+^{}
+{"date" 1.1859264E12, "price" 138.48, "symbol" "AAPL"}
+^{}
+{"date" 1.1886048E12, "price" 153.47, "symbol" "AAPL"}
+^{}
+{"date" 1.1911968E12, "price" 189.95, "symbol" "AAPL"}
+^{}
+{"date" 1.1938752E12, "price" 182.22, "symbol" "AAPL"}
+^{}
+{"date" 1.1964672E12, "price" 198.08, "symbol" "AAPL"}
+^{}
+{"date" 1.1991456E12, "price" 135.36, "symbol" "AAPL"}
+^{}
+{"date" 1.201824E12, "price" 125.02, "symbol" "AAPL"}
+^{}
+{"date" 1.2043296E12, "price" 143.5, "symbol" "AAPL"}
+^{}
+{"date" 1.207008E12, "price" 173.95, "symbol" "AAPL"}
+^{}
+{"date" 1.2096E12, "price" 188.75, "symbol" "AAPL"}
+^{}
+{"date" 1.2122784E12, "price" 167.44, "symbol" "AAPL"}
+^{}
+{"date" 1.2148704E12, "price" 158.95, "symbol" "AAPL"}
+^{}
+{"date" 1.2175488E12, "price" 169.53, "symbol" "AAPL"}
+^{}
+{"date" 1.2202272E12, "price" 113.66, "symbol" "AAPL"}
+^{}
+{"date" 1.2228192E12, "price" 107.59, "symbol" "AAPL"}
+^{}
+{"date" 1.2254976E12, "price" 92.67, "symbol" "AAPL"}
+^{}
+{"date" 1.2280896E12, "price" 85.35, "symbol" "AAPL"}
+^{}
+{"date" 1.230768E12, "price" 90.13, "symbol" "AAPL"}
+^{}
+{"date" 1.2334464E12, "price" 89.31, "symbol" "AAPL"}
+^{}
+{"date" 1.2358656E12, "price" 105.12, "symbol" "AAPL"}
+^{}
+{"date" 1.238544E12, "price" 125.83, "symbol" "AAPL"}
+^{}
+{"date" 1.241136E12, "price" 135.81, "symbol" "AAPL"}
+^{}
+{"date" 1.2438144E12, "price" 142.43, "symbol" "AAPL"}
+^{}
+{"date" 1.2464064E12, "price" 163.39, "symbol" "AAPL"}
+^{}
+{"date" 1.2490848E12, "price" 168.21, "symbol" "AAPL"}
+^{}
+{"date" 1.2517632E12, "price" 185.35, "symbol" "AAPL"}
+^{}
+{"date" 1.2543552E12, "price" 188.5, "symbol" "AAPL"}
+^{}
+{"date" 1.2570336E12, "price" 199.91, "symbol" "AAPL"}
+^{}
+{"date" 1.2596256E12, "price" 210.73, "symbol" "AAPL"}]}]}]}],
+ :meta {:id :ce7851f7-b977-44e4-9bb6-96a67c2bcb5c,
+        :eval-time "2022-06-01 05:39:52",
+        :ns "studio.notebook.ds-vega2",
+        :java "17.0.3",
+        :clojure "1.10.3"}}

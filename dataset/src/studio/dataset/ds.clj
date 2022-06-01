@@ -1,4 +1,4 @@
-(ns studio.viz.ds
+(ns studio.dataset.ds
   (:require
    [tech.v3.dataset :as tds]))
 
@@ -9,7 +9,7 @@
     data))
 
 (defn print-table [ds]
-  ^:R [:p/aggrid
+  ^:R ['ui.aggrid/aggrid
        {:box :lg
         :data (ds->table ds)}])
 

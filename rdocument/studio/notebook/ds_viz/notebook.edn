@@ -1,0 +1,11 @@
+; saved on 2022-06-01 03:37:41
+{:content [{:out "",
+            :id :485987a3-9bc3-448b-99a0-59d9ac2e2657,
+            :code "(ns studio.notebook.ds-viz\n  (:require [studio.dataset.viz :refer [print-table]])\n  )",
+            :ns "studio.notebook.ds-viz",
+            :hiccup [:div.p-2.clj-nil [:p "nil"]]}],
+ :meta {:id :8ae152ab-605a-48be-9b1d-d023365aef7d,
+        :eval-time "2022-06-01 03:37:41",
+        :ns "studio.notebook.ds-viz",
+        :java "17.0.3",
+        :clojure "1.10.3"}}

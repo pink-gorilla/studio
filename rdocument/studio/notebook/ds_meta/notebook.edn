@@ -1,0 +1,177 @@
+; saved on 2022-06-01 04:59:38
+{:content [{:out "",
+            :id :aa1a8759-0ddc-4820-b4bd-e132ca5116c6,
+            :code "(ns studio.notebook.ds-meta\n  (:require\n   [tablecloth.api :as tc]\n   [tech.v3.datatype.functional :as fun]\n   [tech.v3.dataset.print :as print]))",
+            :ns "studio.notebook.ds-meta",
+            :hiccup [:div.p-2.clj-nil [:p "nil"]]}
+           {:out "",
+            :id :f20ee2b2-78e5-481c-b636-216040a7b762,
+            :code "(def ds1\n  (let [n 10]\n    (-> {:w (map #(>= % (quot n 2)) (range n))\n         :x (range n)\n         :y (fun/+ 0.1 (range n))\n         :z (map str (range n))}\n        (tc/dataset {:dataset-name \"ds1\"}))))",
+            :ns "studio.notebook.ds-meta",
+            :hiccup [:span
+                     {:style {:color "deeppink"}}
+                     "#'studio.notebook.ds-meta/ds1"]}
+           {:out "",
+            :id :db9f965b-86d0-4230-9800-497a90d512f0,
+            :code "ds1",
+            :ns "studio.notebook.ds-meta",
+            :hiccup [:span.text-blue-500
+                     "techml dataset "
+                     [user/text
+                      "ds1 [10 4]:\n\n|    :w | :x |  :y | :z |\n|-------|---:|----:|----|\n| false |  0 | 0.1 |  0 |\n| false |  1 | 1.1 |  1 |\n| false |  2 | 2.1 |  2 |\n| false |  3 | 3.1 |  3 |\n| false |  4 | 4.1 |  4 |\n|  true |  5 | 5.1 |  5 |\n|  true |  6 | 6.1 |  6 |\n|  true |  7 | 7.1 |  7 |\n|  true |  8 | 8.1 |  8 |\n|  true |  9 | 9.1 |  9 |\n"]]}
+           {:out "",
+            :id :10b85797-d3a2-49b7-8ec4-532ebc822506,
+            :code "(-> ds1\n    meta)",
+            :ns "studio.notebook.ds-meta",
+            :hiccup [:span.text-green-500
+                     "persistent-array-map"
+                     [user/text "{:name \"ds1\"}\n"]]}
+           {:out "",
+            :id :a42f31a4-6de3-4e6f-93a4-f5988c30b6a7,
+            :code "(->> ds1\n     tc/columns\n     (map meta))",
+            :ns "studio.notebook.ds-meta",
+            :hiccup [:span
+                     {:class "clj-lazy-seq"}
+                     [:span.font-bold.teal-700.mr-1 "("]
+                     [:span.items
+                      [:span.text-green-500
+                       "persistent-array-map"
+                       [user/text
+                        "{:name :w, :datatype :boolean, :n-elems 10}\n"]]
+                      [:span " "]
+                      [:span.text-green-500
+                       "persistent-array-map"
+                       [user/text
+                        "{:name :x, :datatype :int64, :n-elems 10}\n"]]
+                      [:span " "]
+                      [:span.text-green-500
+                       "persistent-array-map"
+                       [user/text
+                        "{:name :y, :datatype :float64, :n-elems 10}\n"]]
+                      [:span " "]
+                      [:span.text-green-500
+                       "persistent-array-map"
+                       [user/text
+                        "{:categorical? true,\n :name :z,\n :datatype :string,\n :n-elems 10}\n"]]]
+                     [:span.font-bold.teal-700.ml-1 ")"]]}
+           {:out "",
+            :id :252a355c-8185-4d0f-9696-321c6a04f94e,
+            :code "(->> ds1\n     tc/info)",
+            :ns "studio.notebook.ds-meta",
+            :hiccup [:span.text-blue-500
+                     "techml dataset "
+                     [user/text
+                      "ds1: descriptive-stats [4 12]:\n\n| :col-name | :datatype | :n-valid | :n-missing | :min | :mean | :mode | :max | :standard-deviation |          :skew | :first | :last |\n|-----------|-----------|---------:|-----------:|-----:|------:|-------|-----:|--------------------:|---------------:|--------|-------|\n|        :w |  :boolean |       10 |          0 |      |       | false |      |                     |                |  false |  true |\n|        :x |    :int64 |       10 |          0 |  0.0 |   4.5 |       |  9.0 |          3.02765035 | 0.00000000E+00 |      0 |     9 |\n|        :y |  :float64 |       10 |          0 |  0.1 |   4.6 |       |  9.1 |          3.02765035 | 1.42233056E-16 | 0.1000 | 9.100 |\n|        :z |   :string |       10 |          0 |      |       |     9 |      |                     |                |      0 |     9 |\n"]]}
+           {:out "",
+            :id :ec6a4b8e-ba5a-41e7-87e6-3bc07bf49fa1,
+            :code "; [10 4]\n\n(-> ds1\n    tc/shape)",
+            :ns "studio.notebook.ds-meta",
+            :hiccup [:span.text-green-500
+                     "persistent-vector"
+                     [user/text "[10 4]\n"]]}
+           {:out "",
+            :id :d6bb673d-5e9a-4814-8ef0-2053cdc4cbd2,
+            :code "(-> ds1\n    (update :x #(vary-meta % assoc :hidden? true))\n    :x\n    meta)",
+            :ns "studio.notebook.ds-meta",
+            :hiccup [:span.text-green-500
+                     "persistent-array-map"
+                     [user/text
+                      "{:name :x, :datatype :int64, :n-elems 10, :hidden? true}\n"]]}
+           {:out "",
+            :id :0ddc9061-fbf1-4f0e-b635-07bea94c007b,
+            :code "(-> [4 1 :A \"v\" 2]\n    (with-meta {:hidden? true})\n    meta)",
+            :ns "studio.notebook.ds-meta",
+            :hiccup [:span.text-green-500
+                     "persistent-array-map"
+                     [user/text "{:hidden? true}\n"]]}
+           {:out "",
+            :id :9fcb7065-c37e-4aa4-92ff-6d82ef0b983d,
+            :code "(-> [4 1 :A \"v\" 2]\n    (with-meta {:hidden? true})\n    (conj 99)\n    meta)",
+            :ns "studio.notebook.ds-meta",
+            :hiccup [:span.text-green-500
+                     "persistent-array-map"
+                     [user/text "{:hidden? true}\n"]]}
+           {:out "",
+            :id :1c1d76d6-6339-4c4c-bd89-35ae0188105d,
+            :code "(-> ds1\n    meta)",
+            :ns "studio.notebook.ds-meta",
+            :hiccup [:span.text-green-500
+                     "persistent-array-map"
+                     [user/text "{:name \"ds1\"}\n"]]}
+           {:out "",
+            :id :2427e78c-c308-4839-bd14-47279bae09af,
+            :code "(-> ds1\n    (tc/group-by [:w]))",
+            :ns "studio.notebook.ds-meta",
+            :hiccup [:span.text-blue-500
+                     "techml dataset "
+                     [user/text
+                      "_unnamed [2 3]:\n\n| :group-id |      :name |                    :data |\n|----------:|------------|--------------------------|\n|         0 | {:w false} | Group: {:w false} [5 4]: |\n|         1 |  {:w true} |  Group: {:w true} [5 4]: |\n"]]}
+           {:out "",
+            :id :edcc56ab-5081-4db8-85de-a7bd3aa96e97,
+            :code "(-> ds1\n    (tc/group-by [:w])\n    meta)",
+            :ns "studio.notebook.ds-meta",
+            :hiccup [:span.text-green-500
+                     "persistent-array-map"
+                     [user/text
+                      "{:name \"_unnamed\",\n :grouped? true,\n :print-line-policy :single}\n"]]}
+           {:out "",
+            :id :54d51616-19f0-42c5-a981-93974e0828b1,
+            :code "(-> ds1\n    (tc/group-by [:w])\n    (print/print-policy :repl))",
+            :ns "studio.notebook.ds-meta",
+            :hiccup [:span.text-blue-500
+                     "techml dataset "
+                     [user/text
+                      "_unnamed [2 3]:\n\n| :group-id |      :name |                          :data |\n|----------:|------------|--------------------------------|\n|         0 | {:w false} | Group: {:w false} [5 4]:       |\n|           |            |                                |\n|           |            | \\|    :w \\| :x \\|  :y \\| :z \\| |\n|           |            | \\|-------\\|---:\\|----:\\|----\\| |\n|           |            | \\| false \\|  0 \\| 0.1 \\|  0 \\| |\n|           |            | \\| false \\|  1 \\| 1.1 \\|  1 \\| |\n|           |            | \\| false \\|  2 \\| 2.1 \\|  2 \\| |\n|           |            | \\| false \\|  3 \\| 3.1 \\|  3 \\| |\n|           |            | \\| false \\|  4 \\| 4.1 \\|  4 \\| |\n|         1 |  {:w true} | Group: {:w true} [5 4]:        |\n|           |            |                                |\n|           |            | \\|   :w \\| :x \\|  :y \\| :z \\|  |\n|           |            | \\|------\\|---:\\|----:\\|----\\|  |\n|           |            | \\| true \\|  5 \\| 5.1 \\|  5 \\|  |\n|           |            | \\| true \\|  6 \\| 6.1 \\|  6 \\|  |\n|           |            | \\| true \\|  7 \\| 7.1 \\|  7 \\|  |\n|           |            | \\| true \\|  8 \\| 8.1 \\|  8 \\|  |\n|           |            | \\| true \\|  9 \\| 9.1 \\|  9 \\|  |\n"]]}
+           {:out "",
+            :id :3950f631-5f98-4e88-a589-0acd07f08089,
+            :code "(-> ds1\n    (tc/group-by [:w])\n    (print/print-policy :markdown))",
+            :ns "studio.notebook.ds-meta",
+            :hiccup [:span.text-blue-500
+                     "techml dataset "
+                     [user/text
+                      "_unnamed [2 3]:\n\n| :group-id |      :name |                                                                                                                                                                                                                                                                      :data |\n|----------:|------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|\n|         0 | {:w false} | Group: {:w false} [5 4]:<br><br>\\|    :w \\| :x \\|  :y \\| :z \\|<br>\\|-------\\|---:\\|----:\\|----\\|<br>\\| false \\|  0 \\| 0.1 \\|  0 \\|<br>\\| false \\|  1 \\| 1.1 \\|  1 \\|<br>\\| false \\|  2 \\| 2.1 \\|  2 \\|<br>\\| false \\|  3 \\| 3.1 \\|  3 \\|<br>\\| false \\|  4 \\| 4.1 \\|  4 \\| |\n|         1 |  {:w true} |         Group: {:w true} [5 4]:<br><br>\\|   :w \\| :x \\|  :y \\| :z \\|<br>\\|------\\|---:\\|----:\\|----\\|<br>\\| true \\|  5 \\| 5.1 \\|  5 \\|<br>\\| true \\|  6 \\| 6.1 \\|  6 \\|<br>\\| true \\|  7 \\| 7.1 \\|  7 \\|<br>\\| true \\|  8 \\| 8.1 \\|  8 \\|<br>\\| true \\|  9 \\| 9.1 \\|  9 \\| |\n"]]}
+           {:out "",
+            :id :33ad1211-3b76-4f12-956a-1ab7e8863abc,
+            :code "(-> ds1\n    (->> (repeat 10)\n         (apply tc/bind))\n    (tc/set-dataset-name :many-ds1)\n    (print/print-range 4))",
+            :ns "studio.notebook.ds-meta",
+            :hiccup [:span.text-blue-500
+                     "techml dataset "
+                     [user/text
+                      ":many-ds1 [100 4]:\n\n|    :w |  :x |  :y |  :z |\n|-------|----:|----:|-----|\n| false |   0 | 0.1 |   0 |\n| false |   1 | 1.1 |   1 |\n|   ... | ... | ... | ... |\n|  true |   7 | 7.1 |   7 |\n|  true |   8 | 8.1 |   8 |\n|  true |   9 | 9.1 |   9 |\n"]]}
+           {:out "",
+            :id :ee794dc5-dd71-4083-8850-f75141ad91ab,
+            :code "(-> ds1\n    (->> (repeat 10)\n         (apply tc/bind))\n    (tc/set-dataset-name :many-ds1)\n    (print/print-range :all))",
+            :ns "studio.notebook.ds-meta",
+            :hiccup [:span.text-blue-500
+                     "techml dataset "
+                     [user/text
+                      ":many-ds1 [100 4]:\n\n|    :w | :x |  :y | :z |\n|-------|---:|----:|----|\n| false |  0 | 0.1 |  0 |\n| false |  1 | 1.1 |  1 |\n| false |  2 | 2.1 |  2 |\n| false |  3 | 3.1 |  3 |\n| false |  4 | 4.1 |  4 |\n|  true |  5 | 5.1 |  5 |\n|  true |  6 | 6.1 |  6 |\n|  true |  7 | 7.1 |  7 |\n|  true |  8 | 8.1 |  8 |\n|  true |  9 | 9.1 |  9 |\n| false |  0 | 0.1 |  0 |\n| false |  1 | 1.1 |  1 |\n| false |  2 | 2.1 |  2 |\n| false |  3 | 3.1 |  3 |\n| false |  4 | 4.1 |  4 |\n|  true |  5 | 5.1 |  5 |\n|  true |  6 | 6.1 |  6 |\n|  true |  7 | 7.1 |  7 |\n|  true |  8 | 8.1 |  8 |\n|  true |  9 | 9.1 |  9 |\n| false |  0 | 0.1 |  0 |\n| false |  1 | 1.1 |  1 |\n| false |  2 | 2.1 |  2 |\n| false |  3 | 3.1 |  3 |\n| false |  4 | 4.1 |  4 |\n|  true |  5 | 5.1 |  5 |\n|  true |  6 | 6.1 |  6 |\n|  true |  7 | 7.1 |  7 |\n|  true |  8 | 8.1 |  8 |\n|  true |  9 | 9.1 |  9 |\n| false |  0 | 0.1 |  0 |\n| false |  1 | 1.1 |  1 |\n| false |  2 | 2.1 |  2 |\n| false |  3 | 3.1 |  3 |\n| false |  4 | 4.1 |  4 |\n|  true |  5 | 5.1 |  5 |\n|  true |  6 | 6.1 |  6 |\n|  true |  7 | 7.1 |  7 |\n|  true |  8 | 8.1 |  8 |\n|  true |  9 | 9.1 |  9 |\n| false |  0 | 0.1 |  0 |\n| false |  1 | 1.1 |  1 |\n| false |  2 | 2.1 |  2 |\n| false |  3 | 3.1 |  3 |\n| false |  4 | 4.1 |  4 |\n|  true |  5 | 5.1 |  5 |\n|  true |  6 | 6.1 |  6 |\n|  true |  7 | 7.1 |  7 |\n|  true |  8 | 8.1 |  8 |\n|  true |  9 | 9.1 |  9 |\n| false |  0 | 0.1 |  0 |\n| false |  1 | 1.1 |  1 |\n| false |  2 | 2.1 |  2 |\n| false |  3 | 3.1 |  3 |\n| false |  4 | 4.1 |  4 |\n|  true |  5 | 5.1 |  5 |\n|  true |  6 | 6.1 |  6 |\n|  true |  7 | 7.1 |  7 |\n|  true |  8 | 8.1 |  8 |\n|  true |  9 | 9.1 |  9 |\n| false |  0 | 0.1 |  0 |\n| false |  1 | 1.1 |  1 |\n| false |  2 | 2.1 |  2 |\n| false |  3 | 3.1 |  3 |\n| false |  4 | 4.1 |  4 |\n|  true |  5 | 5.1 |  5 |\n|  true |  6 | 6.1 |  6 |\n|  true |  7 | 7.1 |  7 |\n|  true |  8 | 8.1 |  8 |\n|  true |  9 | 9.1 |  9 |\n| false |  0 | 0.1 |  0 |\n| false |  1 | 1.1 |  1 |\n| false |  2 | 2.1 |  2 |\n| false |  3 | 3.1 |  3 |\n| false |  4 | 4.1 |  4 |\n|  true |  5 | 5.1 |  5 |\n|  true |  6 | 6.1 |  6 |\n|  true |  7 | 7.1 |  7 |\n|  true |  8 | 8.1 |  8 |\n|  true |  9 | 9.1 |  9 |\n| false |  0 | 0.1 |  0 |\n| false |  1 | 1.1 |  1 |\n| false |  2 | 2.1 |  2 |\n| false |  3 | 3.1 |  3 |\n| false |  4 | 4.1 |  4 |\n|  true |  5 | 5.1 |  5 |\n|  true |  6 | 6.1 |  6 |\n|  true |  7 | 7.1 |  7 |\n|  true |  8 | 8.1 |  8 |\n|  true |  9 | 9.1 |  9 |\n| false |  0 | 0.1 |  0 |\n| false |  1 | 1.1 |  1 |\n| false |  2 | 2.1 |  2 |\n| false |  3 | 3.1 |  3 |\n| false |  4 | 4.1 |  4 |\n|  true |  5 | 5.1 |  5 |\n|  true |  6 | 6.1 |  6 |\n|  true |  7 | 7.1 |  7 |\n|  true |  8 | 8.1 |  8 |\n|  true |  9 | 9.1 |  9 |\n"]]}
+           {:out "",
+            :id :c9ef71cb-6328-4d87-bb63-3ee9c3829bf6,
+            :code "(-> ds1\n    (->> (repeat 10)\n         (apply tc/bind))\n    (tc/set-dataset-name :many-ds1)\n    (print/print-range (concat (range 4)\n                               (range 96 100))))",
+            :ns "studio.notebook.ds-meta",
+            :hiccup [:span.text-blue-500
+                     "techml dataset "
+                     [user/text
+                      ":many-ds1 [100 4]:\n\n|    :w | :x |  :y | :z |\n|-------|---:|----:|----|\n| false |  0 | 0.1 |  0 |\n| false |  1 | 1.1 |  1 |\n| false |  2 | 2.1 |  2 |\n| false |  3 | 3.1 |  3 |\n|  true |  6 | 6.1 |  6 |\n|  true |  7 | 7.1 |  7 |\n|  true |  8 | 8.1 |  8 |\n|  true |  9 | 9.1 |  9 |\n"]]}
+           {:out "",
+            :id :c5c54264-2d77-4702-8ba5-f1bc92173156,
+            :code "(-> ds1\n    (print/print-types true))",
+            :ns "studio.notebook.ds-meta",
+            :hiccup [:span.text-blue-500
+                     "techml dataset "
+                     [user/text
+                      "ds1 [10 4]:\n\n|       :w |     :x |       :y |      :z |\n| :boolean | :int64 | :float64 | :string |\n|----------|-------:|---------:|---------|\n|    false |      0 |      0.1 |       0 |\n|    false |      1 |      1.1 |       1 |\n|    false |      2 |      2.1 |       2 |\n|    false |      3 |      3.1 |       3 |\n|    false |      4 |      4.1 |       4 |\n|     true |      5 |      5.1 |       5 |\n|     true |      6 |      6.1 |       6 |\n|     true |      7 |      7.1 |       7 |\n|     true |      8 |      8.1 |       8 |\n|     true |      9 |      9.1 |       9 |\n"]]}
+           {:out "",
+            :id :84d2bd97-58a4-4e83-a3c3-310865281553,
+            :code "(-> ds1\n    (print/print-width 2))",
+            :ns "studio.notebook.ds-meta",
+            :hiccup [:span.text-blue-500
+                     "techml dataset "
+                     [user/text
+                      "ds1 [10 4]:\n\n| :w | :x | :y | :z |\n|----|---:|---:|----|\n| fa |  0 | 0. |  0 |\n| fa |  1 | 1. |  1 |\n| fa |  2 | 2. |  2 |\n| fa |  3 | 3. |  3 |\n| fa |  4 | 4. |  4 |\n| tr |  5 | 5. |  5 |\n| tr |  6 | 6. |  6 |\n| tr |  7 | 7. |  7 |\n| tr |  8 | 8. |  8 |\n| tr |  9 | 9. |  9 |\n"]]}],
+ :meta {:id :9666e10c-033a-4bf5-a76a-bfe740f64514,
+        :eval-time "2022-06-01 04:59:38",
+        :ns "studio.notebook.ds-meta",
+        :java "17.0.3",
+        :clojure "1.10.3"}}

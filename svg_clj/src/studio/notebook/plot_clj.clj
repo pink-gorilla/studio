@@ -22,16 +22,23 @@
       ;(show)
       :buffer))
 
+(defn vega-clj-img [data]
+  (img (vega-clj data)))
+
 ;; generate plot-image, and show it in browser
 
-(img (-> {:A 10 :B 55 :C 43 :D 91 :E 81 :F 53 :G 19 :H 87 :I 52}
-         vega-clj))
+(-> {:A 10 :B 55 :C 43 :D 91 :E 81 :F 53 :G 19 :H 87 :I 52}
+         vega-clj-img)
 
-(img (-> {:A -10 :B 55 :C 43 :D 91 :E 81 :F 53 :G 19 :H 87 :I 52}
-         vega-clj))
+(-> {:A -10 :B 55 :C 43 :D 91 :E 81 :F 53 :G 19 :H 87 :I 52}
+         vega-clj-img)
 
 (-> {:A -20 :B 55 :C 43 :D 91 :E 81 :F 53 :G 19 :H 87 :I 52}
- vega-clj)
+ vega-clj-img)
+  
+; vega-clj works with sorted map too
+(def data2 (sorted-map :A 28 :B 55 :C 43 :D 91 :E 81 :F 53 :G 19 :H 87 :I 52))
+(vega-clj-img data2)
 
 ; save plot 
 (-> {:A 28 :B 55 :C 43 :D 91 :E 81 :F 53 :G 19 :H 87 :I 52}
@@ -39,21 +46,8 @@
     (rdm/save *ns* "item-plot" :png))
 
 ; show url
-  (rdm/get-link-ns *ns* "item-plot.png")
-  
+(rdm/get-link-ns *ns* "item-plot.png")
 
-
-
-(comment
-
-
-  ; test - can we determine the format?
-  ;(p/filename->extension "item-plot.png")
-  ;(rdm/filename->format "item-plot.png")
-
-  ; vega-clj works with sorted map too
-  (def data2 (sorted-map :A 28 :B 55 :C 43 :D 91 :E 81 :F 53 :G 19 :H 87 :I 52))
-  (vega-clj data2)
-
-;
-  )
+; test - can we determine the format?
+;(rdm/filename->extension "item-plot.png")
+; (rdm/filename->format "item-plot.png")

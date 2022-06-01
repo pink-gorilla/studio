@@ -4,7 +4,7 @@
    [libpython-clj.python :as py :refer [py. py.. py.-]]
    [panthera.panthera :as pt]
    [pinkgorilla.python.core :refer [py-initialize!]]
-   [pinkgorilla.python.plot :refer [with-show]]))
+   [goldly.python2 :refer [with-show]]))
 
 ;;; # Basic panthera concepts
 ;;; 

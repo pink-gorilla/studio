@@ -2,7 +2,7 @@
   (:require
    [libpython-clj.require :refer [require-python]]
    [libpython-clj.python :as py :refer [py. py.. py.-]]
-   [pinkgorilla.python.plot :refer [with-show]]))
+   [goldly.python2 :refer [with-show]]))
 
 ;;; # Python Numpy Plot
 ;;; Ported from: https://github.com/gigasquid/libpython-clj-examples/blob/master/src/gigasquid/numpy_plot.clj

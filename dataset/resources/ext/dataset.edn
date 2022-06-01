@@ -1,0 +1,3 @@
+{:name "dataset"
+ ;run
+ :autoload-clj-ns [studio.dataset.hiccup]}
