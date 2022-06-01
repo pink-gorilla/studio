@@ -1,18 +1,18 @@
-; saved on 2022-06-01 05:40:56
+; saved on 2022-06-01 09:33:13
 {:content [{:out "",
-            :id :a0d6b2ad-60f2-4933-9510-a240aca544ab,
+            :id :4d31fb85-bc4b-4c0e-8dad-29b9e846ac88,
             :code "(ns studio.notebook.ds-vega\n  (:require\n   [tech.v3.dataset :as tds]\n   [tech.v3.datatype.datetime.operations :as dtype-dt-ops]\n   [tech.viz.vega :as vega]\n   [studio.dataset.viz :refer [show-vega]]\n   ))",
             :ns "studio.notebook.ds-vega",
             :hiccup [:div.p-2.clj-nil [:p "nil"]]}
            {:out "",
-            :id :d6d50b35-c4cd-49b4-86e0-e95f1abc9ccb,
+            :id :a85c5cbf-1387-4fef-b441-ac5fae925f84,
             :code "(defn stock-plot []\n  (as-> (tds/->dataset \"https://vega.github.io/vega/data/stocks.csv\") ds\n      ;;The time series chart expects time in epoch milliseconds\n  ;(tds/add-or-update-column ds \"year\" (dtype-dt-ops/get-years (ds \"date\")))\n  ;(tds/filter-column #{2007 2008 2009} \"year\" ds)\n    (tds/update-column ds \"date\" #(dtype-dt-ops/datetime->epoch :epoch-milliseconds %))\n    (tds/mapseq-reader ds)\n  ;;all graphing functions run from pure clojure data.  No batteries required.\n    (vega/time-series ds \"date\" \"price\"\n                      {:title \"Stock Price (2007-2010)\"\n                       :label-key \"symbol\"\n                       :background \"white\"})\n\n  ;(vega/vega->svg-file ds \"timeseries.svg\")\n    ))",
             :ns "studio.notebook.ds-vega",
             :hiccup [:span
                      {:style {:color "deeppink"}}
                      "#'studio.notebook.ds-vega/stock-plot"]}
            {:out "",
-            :id :121403fa-6bd2-4265-a42c-355cc3ff42a0,
+            :id :35c0caca-2323-4c5e-af24-8810dda70cdf,
             :code "(-> (stock-plot)\n    (show-vega))",
             :ns "studio.notebook.ds-vega",
             :hiccup ^{:R true}
@@ -1235,8 +1235,8 @@
 {"date" 1.2649824E12, "price" 204.62, "symbol" "AAPL"}
 ^{}
 {"date" 1.2674016E12, "price" 223.02, "symbol" "AAPL"}]}]}]}],
- :meta {:id :d0ac9aaf-c843-4470-b0cf-73ea0cd01ba3,
-        :eval-time "2022-06-01 05:40:56",
+ :meta {:id :f4daf26d-74a8-4d30-8a5a-9fa06d89dc0a,
+        :eval-time "2022-06-01 09:33:13",
         :ns "studio.notebook.ds-vega",
         :java "17.0.3",
         :clojure "1.10.3"}}

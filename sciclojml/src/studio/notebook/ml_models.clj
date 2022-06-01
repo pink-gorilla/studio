@@ -222,7 +222,8 @@ df
 
 (def iris
   (ds/dataset
-   "https://raw.githubusercontent.com/scicloj/metamorph.ml/main/test/data/iris.csv" {:key-fn keyword}))
+   "https://raw.githubusercontent.com/scicloj/metamorph.ml/main/test/data/iris.csv" 
+   {:key-fn keyword}))
   
 ;Standarise the data:
 (def iris
@@ -243,20 +244,30 @@ iris
 
 
 (show-vega
-(surface-plot iris [:sepal_length :petal_length] rf-model))
+(surface-plot iris 
+              [:sepal_length :petal_length] 
+              rf-model))
 
 
 (show-vega
-(surface-plot iris [:sepal_length :petal_width] rf-model))
+(surface-plot iris 
+              [:sepal_length :petal_width] 
+              rf-model))
 
 (show-vega
-(surface-plot iris [:sepal_width :petal_length] rf-model))
+(surface-plot iris 
+              [:sepal_width :petal_length] 
+              rf-model))
 
 (show-vega
-(surface-plot iris [:sepal_width :petal_width] rf-model))
+(surface-plot iris 
+              [:sepal_width :petal_width] 
+              rf-model))
 
 (show-vega
-(surface-plot iris [:petal_length :petal_width] rf-model))
+(surface-plot iris 
+              [:petal_length :petal_width] 
+              rf-model))
 
 
 
@@ -314,7 +325,7 @@ iris
          (-> model-instance .coefficients seq)
          predictors)))
     (range 1 100000 100))))
-
+coefs-vs-lambda
 ;Then we plot the coefficients over the log of lambda.
 
 (show-vega
@@ -353,7 +364,8 @@ iris
    (mm/select-columns [:bmi :disease-progression])
    (mm/convert-types :disease-progression :float32)
    (mm/set-inference-target :disease-progression)
-   {:metamorph/id :model} (mm/model {:model-type :smile.regression/ordinary-least-square})))
+   {:metamorph/id :model} 
+   (mm/model {:model-type :smile.regression/ordinary-least-square})))
 
 ;We can then fit the model, by running the pipeline in mode :fit
 
@@ -448,26 +460,42 @@ iris
 ; same data from the Iris dataset using 2 columns :sepal_width and sepal_length:"]
 
 (show-vega
-(surface-plot iris [:sepal_length :sepal_width]  {:model-type :smile.classification/ada-boost}))
+(surface-plot iris 
+              [:sepal_length :sepal_width] 
+              {:model-type :smile.classification/ada-boost}))
 
 
 (show-vega
-(surface-plot iris [:sepal_length :sepal_width]  {:model-type :smile.classification/decision-tree}))
+(surface-plot iris 
+              [:sepal_length :sepal_width] 
+              {:model-type :smile.classification/decision-tree}))
+
+
+#_(show-vega
+(surface-plot 
+ iris 
+ [:sepal_length :sepal_width] 
+ {:model-type :smile.classification/gradient-tree-boost}))
 
 
 (show-vega
-(surface-plot iris [:sepal_length :sepal_width]  {:model-type :smile.classification/gradient-tree-boost}))
+(surface-plot 
+ iris 
+ [:sepal_length :sepal_width]  
+ {:model-type :smile.classification/knn}))
 
 
 (show-vega
-(surface-plot iris [:sepal_length :sepal_width]  {:model-type :smile.classification/knn}))
-
+(surface-plot 
+ iris 
+ [:sepal_length :sepal_width] 
+ {:model-type :smile.classification/logistic-regression}))
 
 (show-vega
-(surface-plot iris [:sepal_length :sepal_width]  {:model-type :smile.classification/logistic-regression}))
-
-(show-vega
-(surface-plot iris [:sepal_length :sepal_width]  {:model-type :smile.classification/random-forest}))
+(surface-plot 
+ iris
+ [:sepal_length :sepal_width] 
+ {:model-type :smile.classification/random-forest}))
 
 
 ;^kind/hidden
