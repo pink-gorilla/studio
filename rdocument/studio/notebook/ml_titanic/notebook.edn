@@ -1,0 +1,965 @@
+; saved on 2022-06-01 08:23:55
+{:content [{:out "",
+            :id :0f0c2134-9b9a-4534-b3be-b0c6862449b0,
+            :code "(ns studio.notebook.ml-titanic\n  (:require\n    [clojure.string :as str]\n    [camel-snake-kebab.core :as csk]\n    [tech.v3.dataset.math :as ds-math]\n    [tech.v3.datatype.functional :as dfn]\n    [fastmath.stats :as stats]\n    [fastmath.random :as rnd]\n    [scicloj.ml.dataset :as ds]\n    [scicloj.ml.core :as ml]\n    [scicloj.ml.metamorph :as mm]\n    [scicloj.ml.xgboost]\n    [scicloj.metamorph.ml.loss :as loss]\n    [studio.dataset.viz :refer [show-vega]]\n   ))",
+            :ns "studio.notebook.ml-titanic",
+            :hiccup [:div.p-2.clj-nil [:p "nil"]]}
+           {:out "",
+            :id :148ae447-0d72-4b9a-855f-8e83db9207d8,
+            :code ";## Introduction\n\n; In this example, we will train a model which is able to predict the survival of passengers from the Titanic dataset.\"\n\n; In a real analysis, this would contain as well explorative analysis of the data, which I will skip here,\n\n; as the purpose is to showcase machine learning with scicloj.ml, which is about model evaluation and selection.\"]\n\n;### Read data\n\n(def data (ds/dataset \"resources/sample-data/titanic/train.csv\" {:key-fn csk/->kebab-case-keyword}))",
+            :ns "studio.notebook.ml-titanic",
+            :hiccup [:span
+                     {:style {:color "deeppink"}}
+                     "#'studio.notebook.ml-titanic/data"]}
+           {:out "",
+            :id :e00d7cc4-a156-4aec-9190-7f175d0e9af5,
+            :code ";Column info:\n\n(ds/info data)",
+            :ns "studio.notebook.ml-titanic",
+            :hiccup [:span.text-blue-500
+                     "techml dataset "
+                     [user/text
+                      "resources/sample-data/titanic/train.csv: descriptive-stats [12 12]:\n\n|     :col-name | :datatype | :n-valid | :n-missing | :min |        :mean |              :mode |     :max | :standard-deviation |       :skew |                  :first |               :last |\n|---------------|-----------|---------:|-----------:|-----:|-------------:|--------------------|---------:|--------------------:|------------:|-------------------------|---------------------|\n|          :age |  :float64 |      714 |        177 | 0.42 |  29.69911765 |                    |  80.0000 |         14.52649733 |  0.38910778 |                   22.00 |               32.00 |\n|        :cabin |   :string |      204 |        687 |      |              |                    |          |                     |             |                         |                     |\n|     :embarked |   :string |      889 |          2 |      |              |                  S |          |                     |             |                       S |                   Q |\n|         :fare |  :float64 |      891 |          0 | 0.00 |  32.20420797 |                    | 512.3292 |         49.69342860 |  4.78731652 |                   7.250 |               7.750 |\n|         :name |   :string |      891 |          0 |      |              | Mallet, Mr. Albert |          |                     |             | Braund, Mr. Owen Harris | Dooley, Mr. Patrick |\n|        :parch |    :int16 |      891 |          0 | 0.00 |   0.38159371 |                    |   6.0000 |          0.80605722 |  2.74911705 |                       0 |                   0 |\n| :passenger-id |    :int16 |      891 |          0 | 1.00 | 446.00000000 |                    | 891.0000 |        257.35384202 |  0.00000000 |                       1 |                 891 |\n|       :pclass |    :int16 |      891 |          0 | 1.00 |   2.30864198 |                    |   3.0000 |          0.83607124 | -0.63054791 |                       3 |                   3 |\n|          :sex |   :string |      891 |          0 |      |              |               male |          |                     |             |                    male |                male |\n|       :sib-sp |    :int16 |      891 |          0 | 0.00 |   0.52300786 |                    |   8.0000 |          1.10274343 |  3.69535173 |                       1 |                   0 |\n|     :survived |    :int16 |      891 |          0 | 0.00 |   0.38383838 |                    |   1.0000 |          0.48659245 |  0.47852344 |                       0 |                   0 |\n|       :ticket |   :string |      891 |          0 |      |              |           CA. 2343 |          |                     |             |               A/5 21171 |              370376 |\n"]]}
+           {:out "",
+            :id :259cab39-d65b-4093-817d-7ff999cd8980,
+            :code ";We can explore the association between the categorical columns of the dataset\n\n; with the :survived using cramers-v-corrected:\"\n\n(def categorical-feature-columns [:pclass :sex :age :parch\n                                  :embarked])",
+            :ns "studio.notebook.ml-titanic",
+            :hiccup [:span
+                     {:style {:color "deeppink"}}
+                     "#'studio.notebook.ml-titanic/categorical-feature-columns"]}
+           {:out "",
+            :id :4ff38a53-53f2-48ae-a4c5-339e6bbffb8d,
+            :code "(map\n #(hash-map\n   %\n   (stats/cramers-v-corrected\n    (get  data %)\n    (:survived data)))\n categorical-feature-columns)",
+            :ns "studio.notebook.ml-titanic",
+            :hiccup [:span
+                     {:class "clj-lazy-seq"}
+                     [:span.font-bold.teal-700.mr-1 "("]
+                     [:span.items
+                      [:span.text-green-500
+                       "persistent-hash-map"
+                       [user/text
+                        "{:pclass 0.33668387622245516}\n"]]
+                      [:span " "]
+                      [:span.text-green-500
+                       "persistent-hash-map"
+                       [user/text
+                        "{:sex 0.5426213749215026}\n"]]
+                      [:span " "]
+                      [:span.text-green-500
+                       "persistent-hash-map"
+                       [user/text
+                        "{:age 0.16991560132000488}\n"]]
+                      [:span " "]
+                      [:span.text-green-500
+                       "persistent-hash-map"
+                       [user/text
+                        "{:parch 0.15693364431605167}\n"]]
+                      [:span " "]
+                      [:span.text-green-500
+                       "persistent-hash-map"
+                       [user/text
+                        "{:embarked 0.17309891006164452}\n"]]]
+                     [:span.font-bold.teal-700.ml-1 ")"]]}
+           {:out "",
+            :id :52e9d825-02bb-423c-84e9-cca7dc63a67a,
+            :code ";In this dataset, :sex seems to be the best predictor for survival.\n\n;Association between the select variables:\n\n(for [c1 categorical-feature-columns c2 categorical-feature-columns]\n  {[c1 c2]\n   (stats/cramers-v-corrected (get data c1) (get data  c2))})",
+            :ns "studio.notebook.ml-titanic",
+            :hiccup [:span
+                     {:class "clj-lazy-seq"}
+                     [:span.font-bold.teal-700.mr-1 "("]
+                     [:span.items
+                      [:span.text-green-500
+                       "persistent-array-map"
+                       [user/text
+                        "{[:pclass :pclass] 1.0}\n"]]
+                      [:span " "]
+                      [:span.text-green-500
+                       "persistent-array-map"
+                       [user/text
+                        "{[:pclass :sex] 0.1296896503052887}\n"]]
+                      [:span " "]
+                      [:span.text-green-500
+                       "persistent-array-map"
+                       [user/text
+                        "{[:pclass :age] 0.3083742406780525}\n"]]
+                      [:span " "]
+                      [:span.text-green-500
+                       "persistent-array-map"
+                       [user/text
+                        "{[:pclass :parch] 0.021952123038272046}\n"]]
+                      [:span " "]
+                      [:span.text-green-500
+                       "persistent-array-map"
+                       [user/text
+                        "{[:pclass :embarked] 0.2637111024814829}\n"]]
+                      [:span " "]
+                      [:span.text-green-500
+                       "persistent-array-map"
+                       [user/text
+                        "{[:sex :pclass] 0.12968965030528873}\n"]]
+                      [:span " "]
+                      [:span.text-green-500
+                       "persistent-array-map"
+                       [user/text
+                        "{[:sex :sex] 0.9999999999999999}\n"]]
+                      [:span " "]
+                      [:span.text-green-500
+                       "persistent-array-map"
+                       [user/text
+                        "{[:sex :age] 0.07314569623080924}\n"]]
+                      [:span " "]
+                      [:span.text-green-500
+                       "persistent-array-map"
+                       [user/text
+                        "{[:sex :parch] 0.24710952428178493}\n"]]
+                      [:span " "]
+                      [:span.text-green-500
+                       "persistent-array-map"
+                       [user/text
+                        "{[:sex :embarked] 0.1254672805309745}\n"]]
+                      [:span " "]
+                      [:span.text-green-500
+                       "persistent-array-map"
+                       [user/text
+                        "{[:age :pclass] 0.3083742406780524}\n"]]
+                      [:span " "]
+                      [:span.text-green-500
+                       "persistent-array-map"
+                       [user/text
+                        "{[:age :sex] 0.07314569623080973}\n"]]
+                      [:span " "]
+                      [:span.text-green-500
+                       "persistent-array-map"
+                       [user/text
+                        "{[:age :age] 0.9999999999999996}\n"]]
+                      [:span " "]
+                      [:span.text-green-500
+                       "persistent-array-map"
+                       [user/text
+                        "{[:age :parch] 0.2933617556368759}\n"]]
+                      [:span " "]
+                      [:span.text-green-500
+                       "persistent-array-map"
+                       [user/text
+                        "{[:age :embarked] 0.24889228758508924}\n"]]
+                      [:span " "]
+                      [:span.text-green-500
+                       "persistent-array-map"
+                       [user/text
+                        "{[:parch :pclass] 0.021952123038272067}\n"]]
+                      [:span " "]
+                      [:span.text-green-500
+                       "persistent-array-map"
+                       [user/text
+                        "{[:parch :sex] 0.24710952428178493}\n"]]
+                      [:span " "]
+                      [:span.text-green-500
+                       "persistent-array-map"
+                       [user/text
+                        "{[:parch :age] 0.2933617556368754}\n"]]
+                      [:span " "]
+                      [:span.text-green-500
+                       "persistent-array-map"
+                       [user/text
+                        "{[:parch :parch] 0.9999999999999999}\n"]]
+                      [:span " "]
+                      [:span.text-green-500
+                       "persistent-array-map"
+                       [user/text
+                        "{[:parch :embarked] 0.0}\n"]]
+                      [:span " "]
+                      [:span.text-green-500
+                       "persistent-array-map"
+                       [user/text
+                        "{[:embarked :pclass] 0.2637111024814829}\n"]]
+                      [:span " "]
+                      [:span.text-green-500
+                       "persistent-array-map"
+                       [user/text
+                        "{[:embarked :sex] 0.1254672805309745}\n"]]
+                      [:span " "]
+                      [:span.text-green-500
+                       "persistent-array-map"
+                       [user/text
+                        "{[:embarked :age] 0.2488922875850892}\n"]]
+                      [:span " "]
+                      [:span.text-green-500
+                       "persistent-array-map"
+                       [user/text
+                        "{[:embarked :parch] 0.0}\n"]]
+                      [:span " "]
+                      [:span.text-green-500
+                       "persistent-array-map"
+                       [user/text
+                        "{[:embarked :embarked] 1.0}\n"]]]
+                     [:span.font-bold.teal-700.ml-1 ")"]]}
+           {:out "",
+            :id :cf187c0f-3ae9-4e7d-90d7-9e6557539b27,
+            :code ";This shows how much the columns are correlated.\n\n;## clean some of the features\n\n;The follwoing functions will be used in the pipeline. They clean the\n\n; features to make them better predictors.\n\n(defn categorize-cabin [data]\n  (-> data\n      (ds/add-or-replace-column\n       :cabin\n       (map\n        #(if (empty? %)\n           :unknown\n           (keyword (subs\n                     %\n                     0 1)))\n        (:cabin data)))))",
+            :ns "studio.notebook.ml-titanic",
+            :hiccup [:span
+                     {:style {:color "deeppink"}}
+                     "#'studio.notebook.ml-titanic/categorize-cabin"]}
+           {:out "",
+            :id :d9f70d07-e03e-4934-ad61-37e9344a279e,
+            :code "(defn categorize-age [data]\n  (->\n   data\n   (ds/add-or-replace-column\n    :age-group\n    (map\n     #(cond\n        (< % 10) :child\n        (< % 18) :teen\n        (< % 60) :adult\n        (> % 60) :elderly\n        true :other)\n     (:age data)))))",
+            :ns "studio.notebook.ml-titanic",
+            :hiccup [:span
+                     {:style {:color "deeppink"}}
+                     "#'studio.notebook.ml-titanic/categorize-age"]}
+           {:out "",
+            :id :8be12b36-ee5a-4140-ab65-367bcd17036b,
+            :code ";We want to create a new column :title which might help in the score.\n\n;This is an example of custom function, which creates a new column from existing columns,\n\n;which is a typical case of feature engineering.\"\n\n(defn name->title [dataset]\n  (-> dataset\n      (ds/add-or-replace-column\n       :title\n       (map\n        #(-> % (str/split  #\"\\.\")\n             first\n             (str/split  #\"\\,\")\n             last\n             str/trim)\n        (data :name)))\n      (ds/drop-columns :name)))",
+            :ns "studio.notebook.ml-titanic",
+            :hiccup [:span
+                     {:style {:color "deeppink"}}
+                     "#'studio.notebook.ml-titanic/name->title"]}
+           {:out "",
+            :id :77978dd3-b7db-493f-9abe-40cfdcd0f680,
+            :code "(def title-map\n  {\"Major\" :a\n   \"Col\" :a\n   \"Rev\" :a\n   \"Ms\" :b\n   \"Miss\" :b\n   \"Jonkheer\" :a\n   \"Don\" :a\n   \"Mlle\" :b\n   \"Mr\" :a\n   \"Master\" :a\n   \"Capt\" :a\n   \"Mrs\" :b\n   \"Lady\" :b\n   \"Sir\" :a\n   \"Dr\" :a\n   \"the Countess\" :b\n   \"Mme\" :b})",
+            :ns "studio.notebook.ml-titanic",
+            :hiccup [:span
+                     {:style {:color "deeppink"}}
+                     "#'studio.notebook.ml-titanic/title-map"]}
+           {:out "",
+            :id :a55fe0b3-9c8c-4eff-b7a3-7952eb017764,
+            :code "(defn categorize-title [data]\n  (->\n   data\n   (ds/add-or-replace-column\n    :title\n    (map title-map (:title data)))))",
+            :ns "studio.notebook.ml-titanic",
+            :hiccup [:span
+                     {:style {:color "deeppink"}}
+                     "#'studio.notebook.ml-titanic/categorize-title"]}
+           {:out "",
+            :id :3640578d-1a69-40d8-bc6a-64fbac9e8733,
+            :code ";The final pipeline contains the functions we did before.\n\n(def pipeline-fn\n  (ml/pipeline\n   (mm/replace-missing :embarked :value \"S\")\n   (mm/replace-missing :age :value tech.v3.datatype.functional/mean)\n   (mm/update-column :parch str)\n   (ml/lift categorize-age)\n   (ml/lift name->title)\n   (ml/lift categorize-title)\n   (ml/lift categorize-cabin)\n   (mm/select-columns [:age-group\n                       :cabin\n                       :embarked\n                       :fare\n                       :parch\n                       :pclass\n                       :sex\n                       :survived\n                       :title])\n\n   (fn [ctx]\n     (assoc ctx :categorical-ds\n            (:metamorph/data ctx)))\n\n\n   (mm/categorical->number [:survived :pclass :sex :embarked\n                            :title :age-group :cabin :parch] {} :int64)\n\n   (mm/set-inference-target :survived)))",
+            :ns "studio.notebook.ml-titanic",
+            :hiccup [:span
+                     {:style {:color "deeppink"}}
+                     "#'studio.notebook.ml-titanic/pipeline-fn"]}
+           {:out "",
+            :id :1382dde0-06b9-47d2-a76a-ed7be8bb0868,
+            :code ";Transformed data\n\n(->\n (pipeline-fn {:metamorph/data data :metamorph/mode :fit})\n :metamorph/data)",
+            :ns "studio.notebook.ml-titanic",
+            :hiccup [:span.text-blue-500
+                     "techml dataset "
+                     [user/text
+                      "resources/sample-data/titanic/train.csv [891 9]:\n\n| :age-group | :cabin | :embarked |   :fare | :parch | :pclass | :sex | :survived | :title |\n|-----------:|-------:|----------:|--------:|-------:|--------:|-----:|----------:|-------:|\n|          2 |      2 |         1 |  7.2500 |      0 |       1 |    0 |         0 |      1 |\n|          2 |      6 |         2 | 71.2833 |      0 |       0 |    1 |         1 |      0 |\n|          2 |      2 |         1 |  7.9250 |      0 |       1 |    1 |         1 |      0 |\n|          2 |      6 |         1 | 53.1000 |      0 |       0 |    1 |         1 |      0 |\n|          2 |      2 |         1 |  8.0500 |      0 |       1 |    0 |         0 |      1 |\n|          2 |      2 |         0 |  8.4583 |      0 |       1 |    0 |         0 |      1 |\n|          2 |      7 |         1 | 51.8625 |      0 |       0 |    0 |         0 |      1 |\n|          3 |      2 |         1 | 21.0750 |      0 |       1 |    0 |         0 |      1 |\n|          2 |      2 |         1 | 11.1333 |      0 |       1 |    1 |         1 |      0 |\n|          4 |      2 |         2 | 30.0708 |      0 |       2 |    1 |         1 |      0 |\n|        ... |    ... |       ... |     ... |    ... |     ... |  ... |       ... |    ... |\n|          2 |      2 |         1 | 26.0000 |      0 |       2 |    1 |         1 |      0 |\n|          2 |      2 |         1 |  7.8958 |      0 |       1 |    0 |         0 |      1 |\n|          2 |      2 |         1 | 10.5167 |      0 |       1 |    1 |         0 |      0 |\n|          2 |      2 |         1 | 10.5000 |      0 |       2 |    0 |         0 |      1 |\n|          2 |      2 |         1 |  7.0500 |      0 |       1 |    0 |         0 |      1 |\n|          2 |      2 |         0 | 29.1250 |      0 |       1 |    1 |         0 |      0 |\n|          2 |      2 |         1 | 13.0000 |      0 |       2 |    0 |         0 |      1 |\n|          2 |      4 |         1 | 30.0000 |      0 |       0 |    1 |         1 |      0 |\n|          2 |      2 |         1 | 23.4500 |      0 |       1 |    1 |         0 |      0 |\n|          2 |      6 |         2 | 30.0000 |      0 |       0 |    0 |         1 |      1 |\n|          2 |      2 |         0 |  7.7500 |      0 |       1 |    0 |         0 |      1 |\n"]]}
+           {:out "",
+            :id :6d200ab8-2d87-4e34-bbc8-00e2fc6cf408,
+            :code "; The following splits the dataset in three pieces,\n\n; train, val and test to predict on later.\n\n(def ds-split (first (ds/split->seq data :holdout {:ratio [0.8 0.2]\n                                                   :split-names [:train-val :test]})))",
+            :ns "studio.notebook.ml-titanic",
+            :hiccup [:span
+                     {:style {:color "deeppink"}}
+                     "#'studio.notebook.ml-titanic/ds-split"]}
+           {:out "",
+            :id :28ab4a63-579e-4bba-9c56-580e1c2dc4db,
+            :code ";Create a sequence of train/test  (k-fold with k=10) splits used to evaluate the pipeline.\n\n(def train-val-splits\n  (ds/split->seq\n   (:train-val ds-split)\n   :kfold\n   {:k 10}))",
+            :ns "studio.notebook.ml-titanic",
+            :hiccup [:span
+                     {:style {:color "deeppink"}}
+                     "#'studio.notebook.ml-titanic/train-val-splits"]}
+           {:out "",
+            :id :6dd132aa-54f9-4f05-878a-aa08eb50291d,
+            :code ";The full pipeline definition including the random forrest model.\n\n(def full-pipeline-fn\n  (ml/pipeline\n   pipeline-fn\n   ;; we overwrite the id, so the model function will store\n   ;; it's output (the model) in the pipeline ctx under key :model\n   {:metamorph/id :model}\n   (mm/model {:model-type :smile.classification/random-forest})))",
+            :ns "studio.notebook.ml-titanic",
+            :hiccup [:span
+                     {:style {:color "deeppink"}}
+                     "#'studio.notebook.ml-titanic/full-pipeline-fn"]}
+           {:out "",
+            :id :a40265f3-7249-461a-a8ee-bbce56805e67,
+            :code ";Evaluate the (single) pipeline function using the train/test split\n\n(def evaluations\n  (ml/evaluate-pipelines\n   [full-pipeline-fn]\n   train-val-splits\n   ml/classification-accuracy\n   :accuracy))",
+            :ns "studio.notebook.ml-titanic",
+            :hiccup [:span
+                     {:style {:color "deeppink"}}
+                     "#'studio.notebook.ml-titanic/evaluations"]}
+           {:out "",
+            :id :03ef0507-59b1-4d31-8a7d-c1fe3162c8a6,
+            :code "; The default k-fold splits makes 10 folds,\n\n; so we train 10 models, each having its own loss.\n\n; The `evaluate-pipelines` fn averages the models per pipe-fn,\n\n; and returns the best.\n\n; So we get a single model back, as we only have one pipe fn\"]\n\n; Often we consider the model with the lowest loss to be the best.\n\n; Return a single model only (as a list of 1) , namely the best over all\n\n; pipeline functions and all cross validations is the default behavoiur, but can be changed\n\n; with the `tune options`.\n\n;They controll as well which information is returned.\n\n;`tech.ml` stores the models in the context in a serialzed form,\n\n; and the function `thaw-model` can be used to get the original model back.\n\n; This is a Java class in the case of\n\n; model :smile.classification/random.forest, but this depends on the\n\n; which `model` function is in the pipeline\n\n;We can get for example,  the models like this:\n\n(def models\n  (->> evaluations\n       flatten\n       (map\n        #(hash-map :model (ml/thaw-model (get-in % [:fit-ctx :model]))\n                   :metric ((comp :metric :test-transform) %)\n                   :fit-ctx (:fit-ctx %)))\n\n       (sort-by :mean)\n       reverse))",
+            :ns "studio.notebook.ml-titanic",
+            :hiccup [:span
+                     {:style {:color "deeppink"}}
+                     "#'studio.notebook.ml-titanic/models"]}
+           {:out "",
+            :id :e11ca66e-bf45-4d6f-8c4e-b4cee62b222c,
+            :code ";The accuracy of the best trained model is:\n\n(-> models first :metric)",
+            :ns "studio.notebook.ml-titanic",
+            :hiccup [:span
+                     {:style {:color "darkgreen"}}
+                     "0.8055555555555556"]}
+           {:out "",
+            :id :600a3f9d-24db-429a-bff9-63cee1aed306,
+            :code ";The one with the highest accuracy is then:\n\n(-> models first :model)",
+            :ns "studio.notebook.ml-titanic",
+            :hiccup [:div.border-solid.p-2
+                     [:p.text-red-300
+                      "class smile.classification.RandomForest"]
+                     [:span
+                      "#object[smile.classification.RandomForest 0x70cb84a2 \"smile.classification.RandomForest@70cb84a2\"]"]]}
+           {:out "",
+            :id :b33b2763-7f6d-42ac-8f3b-94b922d3d7f8,
+            :code ";We can get the predictions on new-data, which for classification contain as well\n\n;the posterior probabilities per class.\n\n;We do this by running the pipeline again, this time with new data and merging\n\n; :mode transform\n\n(def predictions\n  (->\n   (full-pipeline-fn\n    (assoc\n     (:fit-ctx (first models))\n     :metamorph/data (:test ds-split)\n     :metamorph/mode :transform))\n   :metamorph/data))",
+            :ns "studio.notebook.ml-titanic",
+            :hiccup [:span
+                     {:style {:color "deeppink"}}
+                     "#'studio.notebook.ml-titanic/predictions"]}
+           {:out "",
+            :id :1b674c84-de96-4f03-99f2-ba9e5373eaa2,
+            :code "predictions",
+            :ns "studio.notebook.ml-titanic",
+            :hiccup [:span.text-blue-500
+                     "techml dataset "
+                     [user/text
+                      ":_unnamed [179 3]:\n\n|          0 |          1 | :survived |\n|-----------:|-----------:|----------:|\n| 0.74874424 | 0.25125576 |       0.0 |\n| 0.70956429 | 0.29043571 |       0.0 |\n| 0.75537458 | 0.24462542 |       0.0 |\n| 0.79797333 | 0.20202667 |       0.0 |\n| 0.67834238 | 0.32165762 |       0.0 |\n| 0.79557724 | 0.20442276 |       0.0 |\n| 0.49440645 | 0.50559355 |       1.0 |\n| 0.73243478 | 0.26756522 |       0.0 |\n| 0.59074056 | 0.40925944 |       0.0 |\n| 0.72692052 | 0.27307948 |       0.0 |\n|        ... |        ... |       ... |\n| 0.75146503 | 0.24853497 |       0.0 |\n| 0.53366755 | 0.46633245 |       0.0 |\n| 0.50306771 | 0.49693229 |       0.0 |\n| 0.79557724 | 0.20442276 |       0.0 |\n| 0.50287136 | 0.49712864 |       0.0 |\n| 0.79904039 | 0.20095961 |       0.0 |\n| 0.40767678 | 0.59232322 |       1.0 |\n| 0.57852276 | 0.42147724 |       0.0 |\n| 0.79557724 | 0.20442276 |       0.0 |\n| 0.73451941 | 0.26548059 |       0.0 |\n| 0.74623534 | 0.25376466 |       0.0 |\n"]]}
+           {:out "",
+            :id :dc720d1b-52bf-4bdc-b9d2-44d8656184b6,
+            :code ";Out of the predictions and the truth, we can construct the\n\n; confusion matrix.\"\n\n(def trueth\n  (->\n   (full-pipeline-fn {:metamorph/data (:test ds-split) :metamorph/mode :fit})\n   :metamorph/data\n   tech.v3.dataset.modelling/labels))",
+            :ns "studio.notebook.ml-titanic",
+            :hiccup [:span
+                     {:style {:color "deeppink"}}
+                     "#'studio.notebook.ml-titanic/trueth"]}
+           {:out "",
+            :id :85fc17a6-6789-4604-83a5-278eb9a1a2b3,
+            :code "(->\n (ml/confusion-map (:survived predictions)\n                   (:survived trueth)\n                   :none)\n (ml/confusion-map->ds))",
+            :ns "studio.notebook.ml-titanic",
+            :hiccup [:span.text-blue-500
+                     "techml dataset "
+                     [user/text
+                      "_unnamed [3 3]:\n\n| :column-name |   0 |  1 |\n|--------------|-----|----|\n|  column-name |   0 |  1 |\n|            0 | 108 |  7 |\n|            1 |  19 | 45 |\n"]]}
+           {:out "",
+            :id :ff1458a5-1d35-446e-99d2-f2626217a9b8,
+            :code ";### Hyper parameter tuning\n\n; This defines a pipeline with options. The options gets passed to the model function,\n\n; so become hyper-parameters of the model.\n\n; The `use-age?` options is used to make a conditional pipeline. As the use-age? variable becomes part of the grid to search in,\n\n; we tune it as well.\n\n; This is an example how pipeline-options can be grid searched in the same way then hyper-parameters of the model.\n\n(defn make-pipeline-fn [options]\n\n  (ml/pipeline\n   pipeline-fn\n   {:metamorph/id :model}\n   (mm/model\n    (merge options\n           {:model-type :smile.classification/random-forest}))))",
+            :ns "studio.notebook.ml-titanic",
+            :hiccup [:span
+                     {:style {:color "deeppink"}}
+                     "#'studio.notebook.ml-titanic/make-pipeline-fn"]}
+           {:out "",
+            :id :c6b39a28-a66a-488a-b0e9-52c4ad9457c1,
+            :code ";Use sobol optimization, to find som grid points,\n\n;which cover in a smart way the hyper-parameter space.\n\n(def search-grid\n  (->>\n   (ml/sobol-gridsearch {:trees (ml/linear 100 500 10)\n                         :mtry (ml/categorical [0 2 4])\n                         :split-rule (ml/categorical [:gini :entropy])\n                         :max-depth (ml/linear 1 50 10)\n                         :node-size (ml/linear 1 10 10)})\n\n   (take 500)))",
+            :ns "studio.notebook.ml-titanic",
+            :hiccup [:span
+                     {:style {:color "deeppink"}}
+                     "#'studio.notebook.ml-titanic/search-grid"]}
+           {:out "",
+            :id :4456a4cc-e757-4177-876c-046a9b9750ab,
+            :code ";Generate the pipeline-fns we want to evaluate.\n\n(def pipeline-fns (map make-pipeline-fn search-grid))",
+            :ns "studio.notebook.ml-titanic",
+            :hiccup [:span
+                     {:style {:color "deeppink"}}
+                     "#'studio.notebook.ml-titanic/pipeline-fns"]}
+           {:out "",
+            :id :181f2437-ea52-4923-89dc-4cf8261c5d85,
+            :code "(defn xgboost-pipe [opts]\n  (ml/pipeline\n   pipeline-fn\n   {:metamorph/id :model}\n   (mm/model\n    (merge opts\n           {:model-type :xgboost/classification}))))",
+            :ns "studio.notebook.ml-titanic",
+            :hiccup [:span
+                     {:style {:color "deeppink"}}
+                     "#'studio.notebook.ml-titanic/xgboost-pipe"]}
+           {:out "",
+            :id :3a1a7179-6419-4f6d-8e20-384868fe6df6,
+            :code "(def xgboost-pipes\n  (->>\n   (ml/sobol-gridsearch\n    (ml/hyperparameters :xgboost/classification))\n   (take 500)\n   (map xgboost-pipe)))",
+            :ns "studio.notebook.ml-titanic",
+            :hiccup [:span
+                     {:style {:color "deeppink"}}
+                     "#'studio.notebook.ml-titanic/xgboost-pipes"]}
+           {:out "",
+            :id :a603cde1-23a9-4a6b-a0e7-923c9cc64ce4,
+            :code ";Evaluate all  pipelines and keep results\n\n(def evaluations\n\n  (ml/evaluate-pipelines\n   (take 10\n         (concat xgboost-pipes xgboost-pipes))\n   train-val-splits\n   ml/classification-accuracy\n   :accuracy\n   {:return-best-pipeline-only false\n    :return-best-crossvalidation-only false\n    ;; :evaluation-handler-fn (fn [m]\n    ;;                          (println (:metric m)))\n\n\n    :map-fn :map}))",
+            :ns "studio.notebook.ml-titanic",
+            :hiccup [:span
+                     {:style {:color "deeppink"}}
+                     "#'studio.notebook.ml-titanic/evaluations"]}
+           {:out "",
+            :id :70b40de3-de50-450f-b352-c16efefcb9ef,
+            :code ";Get the key information from the evaluations and sort by the metric function used,\n\n; accuracy here.\n\n(def models\n  (->> evaluations\n       flatten\n       (map\n        #(assoc\n          (select-keys % [:test-transform :fit-ctx :pipe-fn])\n\n          :model (ml/thaw-model (get-in % [:fit-ctx :model]))))\n       (sort-by (comp :metric :test-transform))\n       reverse))",
+            :ns "studio.notebook.ml-titanic",
+            :hiccup [:span
+                     {:style {:color "deeppink"}}
+                     "#'studio.notebook.ml-titanic/models"]}
+           {:out "",
+            :id :6f168a1b-e01f-441a-b02e-4c85e71a1217,
+            :code ";As we did several pipelines and several x-fold cross validation, we have quite some models trained in total \n\n(count models)",
+            :ns "studio.notebook.ml-titanic",
+            :hiccup [:span {:style {:color "blue"}} "100"]}
+           {:out "",
+            :id :6d779b1d-aa3f-451f-9cb0-f07c5dcc4646,
+            :code ";As we sorted by mean accuracy, the first evaluation result is the best model,\n\n(def best-model (first models))",
+            :ns "studio.notebook.ml-titanic",
+            :hiccup [:span
+                     {:style {:color "deeppink"}}
+                     "#'studio.notebook.ml-titanic/best-model"]}
+           {:out "",
+            :id :38d64984-03fc-4988-96b9-092b38265bfd,
+            :code ";which is:\n\n(:model best-model)",
+            :ns "studio.notebook.ml-titanic",
+            :hiccup [:div.border-solid.p-2
+                     [:p.text-red-300
+                      "class ml.dmlc.xgboost4j.java.Booster"]
+                     [:span
+                      "#object[ml.dmlc.xgboost4j.java.Booster 0x51bdca3b \"ml.dmlc.xgboost4j.java.Booster@51bdca3b\"]"]]}
+           {:out "",
+            :id :b7c08424-9285-43cf-bd9d-968978572fb2,
+            :code "; with a mean accuracy of: \n\n(-> best-model :test-transform :mean)",
+            :ns "studio.notebook.ml-titanic",
+            :hiccup [:span
+                     {:style {:color "darkgreen"}}
+                     "0.8083333333333333"]}
+           {:out "",
+            :id :b08b7bcd-1795-418c-a3ae-1e2cb71dafd3,
+            :code "; and a accuracy of \n\n(-> best-model :test-transform :metric)",
+            :ns "studio.notebook.ml-titanic",
+            :hiccup [:span
+                     {:style {:color "darkgreen"}}
+                     "0.9027777777777778"]}
+           {:out "mean acc:  0.8083333333333333\n",
+            :id :e21e6a8e-9f4a-4eb1-8ed4-7bdc25db8a76,
+            :code "(println \"mean acc: \" (-> best-model :test-transform :mean))",
+            :ns "studio.notebook.ml-titanic",
+            :hiccup [:div.p-2.clj-nil [:p "nil"]]}
+           {:out "acc:  0.9027777777777778\n",
+            :id :be666c97-6a6b-4d7e-aa68-311955e53495,
+            :code "(println \"acc: \" (-> best-model :test-transform :metric))",
+            :ns "studio.notebook.ml-titanic",
+            :hiccup [:div.p-2.clj-nil [:p "nil"]]}
+           {:out "",
+            :id :bbfb883c-5573-4bca-b80a-7fcf42060b61,
+            :code ";\"using options:\n\n(-> best-model :fit-ctx :model :options)",
+            :ns "studio.notebook.ml-titanic",
+            :hiccup [:span.text-green-500
+                     "persistent-hash-map"
+                     [user/text
+                      "{:subsample 0.85,\n :scale-pos-weight 1.1880000000000002,\n :lambda 0.2893103448275862,\n :round 46,\n :model-type :xgboost/classification,\n :gamma 0.11199999999999999,\n :alpha 0.14448275862068966,\n :max-depth 5,\n :eta 0.7777777777777778}\n"]]}
+           {:out "{:subsample 0.85,\n :scale-pos-weight 1.1880000000000002,\n :lambda 0.2893103448275862,\n :round 46,\n :model-type :xgboost/classification,\n :gamma 0.11199999999999999,\n :alpha 0.14448275862068966,\n :max-depth 5,\n :eta 0.7777777777777778}\n",
+            :id :239392a9-c05e-403f-a6f6-a333ccb94f8c,
+            :code "(clojure.pprint/pprint (-> best-model :fit-ctx :model :options))",
+            :ns "studio.notebook.ml-titanic",
+            :hiccup [:div.p-2.clj-nil [:p "nil"]]}
+           {:out "",
+            :id :560fd116-9c80-4800-a527-2323361d3888,
+            :code "(def test-data (ds/dataset \"resources/sample-data/titanic/test.csv\"\n                           {:key-fn csk/->kebab-case-keyword}))",
+            :ns "studio.notebook.ml-titanic",
+            :hiccup [:span
+                     {:style {:color "deeppink"}}
+                     "#'studio.notebook.ml-titanic/test-data"]}
+           {:out "",
+            :id :f88d4334-ac00-4322-ac7c-c0dd015b43f1,
+            :code "(def predition-on-test\n  (full-pipeline-fn\n   (assoc (:fit-ctx best-model)\n          :metamorph/data (ds/add-column test-data :survived nil)\n          :metamorph/mode :transform)))",
+            :ns "studio.notebook.ml-titanic",
+            :hiccup [:span
+                     {:style {:color "deeppink"}}
+                     "#'studio.notebook.ml-titanic/predition-on-test"]}
+           {:out "",
+            :id :7f7c7bcb-7ce0-451a-ad98-c1460615998b,
+            :code "(def prediction-ds\n  (->\n   (predition-on-test :metamorph/data)\n   (ds/add-column :passenger-id (:passenger-id test-data))\n   (ds/convert-types [:survived] :int)\n   (ds/select-columns [:passenger-id :survived 0 1])))",
+            :ns "studio.notebook.ml-titanic",
+            :hiccup [:span
+                     {:style {:color "deeppink"}}
+                     "#'studio.notebook.ml-titanic/prediction-ds"]}
+           {:out "",
+            :id :621ce92a-f315-4968-96b7-a129cca78755,
+            :code "prediction-ds",
+            :ns "studio.notebook.ml-titanic",
+            :hiccup [:span.text-blue-500
+                     "techml dataset "
+                     [user/text
+                      ":_unnamed [418 4]:\n\n| :passenger-id | :survived |          0 |          1 |\n|--------------:|----------:|-----------:|-----------:|\n|           892 |         0 | 0.94287640 | 0.05712361 |\n|           893 |         1 | 0.03385845 | 0.96614152 |\n|           894 |         0 | 0.93725944 | 0.06274050 |\n|           895 |         0 | 0.92022949 | 0.07977054 |\n|           896 |         1 | 0.07364754 | 0.92635250 |\n|           897 |         0 | 0.98527724 | 0.01472273 |\n|           898 |         0 | 0.83087516 | 0.16912478 |\n|           899 |         0 | 0.98585171 | 0.01414830 |\n|           900 |         1 | 0.01014837 | 0.98985159 |\n|           901 |         0 | 0.99774569 | 0.00225428 |\n|           ... |       ... |        ... |        ... |\n|          1299 |         0 | 0.82326198 | 0.17673801 |\n|          1300 |         1 | 0.42802233 | 0.57197762 |\n|          1301 |         1 | 0.28749576 | 0.71250421 |\n|          1302 |         1 | 0.35365584 | 0.64634418 |\n|          1303 |         1 | 0.00709881 | 0.99290121 |\n|          1304 |         0 | 0.86417311 | 0.13582687 |\n|          1305 |         0 | 0.91996962 | 0.08003038 |\n|          1306 |         1 | 0.00666792 | 0.99333209 |\n|          1307 |         0 | 0.98545188 | 0.01454806 |\n|          1308 |         0 | 0.94373137 | 0.05626862 |\n|          1309 |         0 | 0.85036266 | 0.14963742 |\n"]]}
+           {:out "",
+            :id :15fc2ce6-2d0a-4367-9268-bdc9e91e3dcf,
+            :code ";# Create Subimssion file to Kaggle\n\n(def submission-ds\n  (-> prediction-ds\n      (ds/select-columns [:passenger-id :survived])\n      (ds/rename-columns {:passenger-id \"PassengerId\"\n                          :survived \"Survived\"})))",
+            :ns "studio.notebook.ml-titanic",
+            :hiccup [:span
+                     {:style {:color "deeppink"}}
+                     "#'studio.notebook.ml-titanic/submission-ds"]}
+           {:out "",
+            :id :55b3a415-5bd5-4ecc-adef-0edf08e583b1,
+            :code "(ds/write-csv! submission-ds \"target/submission.csv\")",
+            :ns "studio.notebook.ml-titanic",
+            :hiccup [:div.p-2.clj-nil [:p "nil"]]}
+           {:out "",
+            :id :c0034a01-7966-4025-8362-1d34963a8132,
+            :code ";### Learning curve\n\n(def training-curve-splits\n  (map\n   #(hash-map :train (ds/head (:train-val ds-split) %)\n              :test (:test ds-split))\n   (range 5 (ds/row-count (:train-val ds-split)) 10)))",
+            :ns "studio.notebook.ml-titanic",
+            :hiccup [:span
+                     {:style {:color "deeppink"}}
+                     "#'studio.notebook.ml-titanic/training-curve-splits"]}
+           {:out "",
+            :id :49baee11-ddcc-4b06-b986-652c0a097235,
+            :code "(def training-curve-evaluations\n  (ml/evaluate-pipelines [(:pipe-fn (first models))]\n                         training-curve-splits\n                         ml/classification-accuracy\n                         :accuracy\n                         {:map-fn :map\n                          :return-best-pipeline-only false\n                          :return-best-crossvalidation-only false\n                          :evaluation-handler-fn identity}))",
+            :ns "studio.notebook.ml-titanic",
+            :hiccup [:span
+                     {:style {:color "deeppink"}}
+                     "#'studio.notebook.ml-titanic/training-curve-evaluations"]}
+           {:out "",
+            :id :99ddd5b4-1c4c-436d-9eaf-ba28b08bda01,
+            :code "(def train-counts\n  (->> training-curve-evaluations flatten (map #(-> % :fit-ctx :metamorph/data ds/row-count))))",
+            :ns "studio.notebook.ml-titanic",
+            :hiccup [:span
+                     {:style {:color "deeppink"}}
+                     "#'studio.notebook.ml-titanic/train-counts"]}
+           {:out "",
+            :id :6bd81fcd-28b6-4506-86cb-76a64a83e3a0,
+            :code "(def test-metrices\n  (->> training-curve-evaluations flatten (map #(-> % :test-transform :metric))))",
+            :ns "studio.notebook.ml-titanic",
+            :hiccup [:span
+                     {:style {:color "deeppink"}}
+                     "#'studio.notebook.ml-titanic/test-metrices"]}
+           {:out "",
+            :id :e8508849-875b-433c-a8db-ab73409115a9,
+            :code "(def train-metrices\n  (->> training-curve-evaluations flatten (map #(-> % :train-transform :metric))))",
+            :ns "studio.notebook.ml-titanic",
+            :hiccup [:span
+                     {:style {:color "deeppink"}}
+                     "#'studio.notebook.ml-titanic/train-metrices"]}
+           {:out "",
+            :id :5c4208bb-6fc3-4c9c-810d-a2af8f584b71,
+            :code "(def traing-curve-plot-data\n  (reverse\n   (sort-by :metric\n            (flatten\n             (map\n              #(vector (zipmap [:count :metric :type] [%1 %2 :test])\n                       (zipmap [:count :metric :type] [%1 %3 :train]))\n              train-counts\n              test-metrices\n              train-metrices)))))",
+            :ns "studio.notebook.ml-titanic",
+            :hiccup [:span
+                     {:style {:color "deeppink"}}
+                     "#'studio.notebook.ml-titanic/traing-curve-plot-data"]}
+           {:out "",
+            :id :48935518-f45d-4fe7-85c5-0256654e9148,
+            :code "(show-vega \n{:data {:values traing-curve-plot-data}\n :width 500\n :height 500\n :mark {:type \"line\"}\n :encoding {:x {:field :count :type \"quantitative\"}\n            :y {:field :metric :type \"quantitative\"}\n            :color {:field :type}}})",
+            :ns "studio.notebook.ml-titanic",
+            :hiccup ^{:R true}
+                    [ui.vega/vega
+                     {:data {:values ({:count 5,
+                                       :metric 1.0,
+                                       :type :train}
+                                      {:count 35,
+                                       :metric 1.0,
+                                       :type :train}
+                                      {:count 45,
+                                       :metric 1.0,
+                                       :type :train}
+                                      {:count 55,
+                                       :metric 1.0,
+                                       :type :train}
+                                      {:count 75,
+                                       :metric 1.0,
+                                       :type :train}
+                                      {:count 65,
+                                       :metric 1.0,
+                                       :type :train}
+                                      {:count 85,
+                                       :metric 1.0,
+                                       :type :train}
+                                      {:count 95,
+                                       :metric 1.0,
+                                       :type :train}
+                                      {:count 105,
+                                       :metric 1.0,
+                                       :type :train}
+                                      {:count 115,
+                                       :metric 1.0,
+                                       :type :train}
+                                      {:count 15,
+                                       :metric 1.0,
+                                       :type :train}
+                                      {:count 135,
+                                       :metric 0.9925925925925926,
+                                       :type :train}
+                                      {:count 155,
+                                       :metric 0.9870967741935484,
+                                       :type :train}
+                                      {:count 125,
+                                       :metric 0.984,
+                                       :type :train}
+                                      {:count 145,
+                                       :metric 0.9793103448275862,
+                                       :type :train}
+                                      {:count 175,
+                                       :metric 0.9714285714285714,
+                                       :type :train}
+                                      {:count 165,
+                                       :metric 0.9696969696969697,
+                                       :type :train}
+                                      {:count 185,
+                                       :metric 0.9621621621621622,
+                                       :type :train}
+                                      {:count 25,
+                                       :metric 0.96,
+                                       :type :train}
+                                      {:count 195,
+                                       :metric 0.9538461538461538,
+                                       :type :train}
+                                      {:count 255,
+                                       :metric 0.9529411764705882,
+                                       :type :train}
+                                      {:count 275,
+                                       :metric 0.9527272727272726,
+                                       :type :train}
+                                      {:count 265,
+                                       :metric 0.9509433962264151,
+                                       :type :train}
+                                      {:count 235,
+                                       :metric 0.948936170212766,
+                                       :type :train}
+                                      {:count 215,
+                                       :metric 0.9488372093023256,
+                                       :type :train}
+                                      {:count 285,
+                                       :metric 0.9473684210526316,
+                                       :type :train}
+                                      {:count 245,
+                                       :metric 0.9469387755102041,
+                                       :type :train}
+                                      {:count 225,
+                                       :metric 0.9466666666666667,
+                                       :type :train}
+                                      {:count 205,
+                                       :metric 0.9463414634146341,
+                                       :type :train}
+                                      {:count 295,
+                                       :metric 0.9457627118644067,
+                                       :type :train}
+                                      {:count 485,
+                                       :metric 0.9443298969072165,
+                                       :type :train}
+                                      {:count 305,
+                                       :metric 0.9442622950819672,
+                                       :type :train}
+                                      {:count 445,
+                                       :metric 0.9438202247191011,
+                                       :type :train}
+                                      {:count 455,
+                                       :metric 0.942857142857143,
+                                       :type :train}
+                                      {:count 415,
+                                       :metric 0.9421686746987952,
+                                       :type :train}
+                                      {:count 575,
+                                       :metric 0.9408695652173913,
+                                       :type :train}
+                                      {:count 335,
+                                       :metric 0.9402985074626866,
+                                       :type :train}
+                                      {:count 565,
+                                       :metric 0.9398230088495575,
+                                       :type :train}
+                                      {:count 315,
+                                       :metric 0.9396825396825397,
+                                       :type :train}
+                                      {:count 695,
+                                       :metric 0.939568345323741,
+                                       :type :train}
+                                      {:count 645,
+                                       :metric 0.9395348837209302,
+                                       :type :train}
+                                      {:count 545,
+                                       :metric 0.9394495412844037,
+                                       :type :train}
+                                      {:count 495,
+                                       :metric 0.9393939393939394,
+                                       :type :train}
+                                      {:count 675,
+                                       :metric 0.9392592592592593,
+                                       :type :train}
+                                      {:count 395,
+                                       :metric 0.9392405063291139,
+                                       :type :train}
+                                      {:count 345,
+                                       :metric 0.9391304347826087,
+                                       :type :train}
+                                      {:count 475,
+                                       :metric 0.9389473684210526,
+                                       :type :train}
+                                      {:count 605,
+                                       :metric 0.9388429752066116,
+                                       :type :train}
+                                      {:count 535,
+                                       :metric 0.9383177570093458,
+                                       :type :train}
+                                      {:count 435,
+                                       :metric 0.9379310344827586,
+                                       :type :train}
+                                      {:count 385,
+                                       :metric 0.9376623376623378,
+                                       :type :train}
+                                      {:count 465,
+                                       :metric 0.9376344086021505,
+                                       :type :train}
+                                      {:count 625,
+                                       :metric 0.9376,
+                                       :type :train}
+                                      {:count 685,
+                                       :metric 0.9372262773722628,
+                                       :type :train}
+                                      {:count 525,
+                                       :metric 0.937142857142857,
+                                       :type :train}
+                                      {:count 635,
+                                       :metric 0.937007874015748,
+                                       :type :train}
+                                      {:count 365,
+                                       :metric 0.936986301369863,
+                                       :type :train}
+                                      {:count 555,
+                                       :metric 0.9369369369369369,
+                                       :type :train}
+                                      {:count 665,
+                                       :metric 0.9368421052631579,
+                                       :type :train}
+                                      {:count 505,
+                                       :metric 0.9366336633663366,
+                                       :type :train}
+                                      {:count 425,
+                                       :metric 0.936470588235294,
+                                       :type :train}
+                                      {:count 705,
+                                       :metric 0.9361702127659574,
+                                       :type :train}
+                                      {:count 515,
+                                       :metric 0.9359223300970874,
+                                       :type :train}
+                                      {:count 655,
+                                       :metric 0.9358778625954198,
+                                       :type :train}
+                                      {:count 405,
+                                       :metric 0.9358024691358025,
+                                       :type :train}
+                                      {:count 355,
+                                       :metric 0.9352112676056338,
+                                       :type :train}
+                                      {:count 615,
+                                       :metric 0.9349593495934959,
+                                       :type :train}
+                                      {:count 585,
+                                       :metric 0.9333333333333333,
+                                       :type :train}
+                                      {:count 595,
+                                       :metric 0.9327731092436975,
+                                       :type :train}
+                                      {:count 325,
+                                       :metric 0.9323076923076923,
+                                       :type :train}
+                                      {:count 375,
+                                       :metric 0.9306666666666668,
+                                       :type :train}
+                                      {:count 565,
+                                       :metric 0.8603351955307263,
+                                       :type :test}
+                                      {:count 575,
+                                       :metric 0.8603351955307263,
+                                       :type :test}
+                                      {:count 15,
+                                       :metric 0.8491620111731844,
+                                       :type :test}
+                                      {:count 705,
+                                       :metric 0.8491620111731844,
+                                       :type :test}
+                                      {:count 365,
+                                       :metric 0.8435754189944134,
+                                       :type :test}
+                                      {:count 335,
+                                       :metric 0.8379888268156425,
+                                       :type :test}
+                                      {:count 165,
+                                       :metric 0.8324022346368715,
+                                       :type :test}
+                                      {:count 445,
+                                       :metric 0.8324022346368715,
+                                       :type :test}
+                                      {:count 475,
+                                       :metric 0.8324022346368715,
+                                       :type :test}
+                                      {:count 115,
+                                       :metric 0.8268156424581006,
+                                       :type :test}
+                                      {:count 155,
+                                       :metric 0.8268156424581006,
+                                       :type :test}
+                                      {:count 245,
+                                       :metric 0.8268156424581006,
+                                       :type :test}
+                                      {:count 405,
+                                       :metric 0.8268156424581006,
+                                       :type :test}
+                                      {:count 515,
+                                       :metric 0.8268156424581006,
+                                       :type :test}
+                                      {:count 525,
+                                       :metric 0.8268156424581006,
+                                       :type :test}
+                                      {:count 685,
+                                       :metric 0.8268156424581006,
+                                       :type :test}
+                                      {:count 695,
+                                       :metric 0.8268156424581006,
+                                       :type :test}
+                                      {:count 285,
+                                       :metric 0.8212290502793296,
+                                       :type :test}
+                                      {:count 375,
+                                       :metric 0.8212290502793296,
+                                       :type :test}
+                                      {:count 385,
+                                       :metric 0.8212290502793296,
+                                       :type :test}
+                                      {:count 485,
+                                       :metric 0.8212290502793296,
+                                       :type :test}
+                                      {:count 535,
+                                       :metric 0.8212290502793296,
+                                       :type :test}
+                                      {:count 605,
+                                       :metric 0.8212290502793296,
+                                       :type :test}
+                                      {:count 355,
+                                       :metric 0.8156424581005587,
+                                       :type :test}
+                                      {:count 415,
+                                       :metric 0.8156424581005587,
+                                       :type :test}
+                                      {:count 425,
+                                       :metric 0.8156424581005587,
+                                       :type :test}
+                                      {:count 675,
+                                       :metric 0.8156424581005587,
+                                       :type :test}
+                                      {:count 105,
+                                       :metric 0.8100558659217877,
+                                       :type :test}
+                                      {:count 435,
+                                       :metric 0.8100558659217877,
+                                       :type :test}
+                                      {:count 455,
+                                       :metric 0.8100558659217877,
+                                       :type :test}
+                                      {:count 495,
+                                       :metric 0.8100558659217877,
+                                       :type :test}
+                                      {:count 595,
+                                       :metric 0.8100558659217877,
+                                       :type :test}
+                                      {:count 665,
+                                       :metric 0.8100558659217877,
+                                       :type :test}
+                                      {:count 95,
+                                       :metric 0.8044692737430168,
+                                       :type :test}
+                                      {:count 345,
+                                       :metric 0.8044692737430168,
+                                       :type :test}
+                                      {:count 465,
+                                       :metric 0.8044692737430168,
+                                       :type :test}
+                                      {:count 615,
+                                       :metric 0.8044692737430168,
+                                       :type :test}
+                                      {:count 655,
+                                       :metric 0.8044692737430168,
+                                       :type :test}
+                                      {:count 315,
+                                       :metric 0.7988826815642458,
+                                       :type :test}
+                                      {:count 325,
+                                       :metric 0.7988826815642458,
+                                       :type :test}
+                                      {:count 635,
+                                       :metric 0.7988826815642458,
+                                       :type :test}
+                                      {:count 645,
+                                       :metric 0.7988826815642458,
+                                       :type :test}
+                                      {:count 85,
+                                       :metric 0.7932960893854749,
+                                       :type :test}
+                                      {:count 395,
+                                       :metric 0.7932960893854749,
+                                       :type :test}
+                                      {:count 555,
+                                       :metric 0.7932960893854749,
+                                       :type :test}
+                                      {:count 185,
+                                       :metric 0.7877094972067039,
+                                       :type :test}
+                                      {:count 255,
+                                       :metric 0.7877094972067039,
+                                       :type :test}
+                                      {:count 295,
+                                       :metric 0.7877094972067039,
+                                       :type :test}
+                                      {:count 505,
+                                       :metric 0.7877094972067039,
+                                       :type :test}
+                                      {:count 625,
+                                       :metric 0.7877094972067039,
+                                       :type :test}
+                                      {:count 125,
+                                       :metric 0.782122905027933,
+                                       :type :test}
+                                      {:count 215,
+                                       :metric 0.782122905027933,
+                                       :type :test}
+                                      {:count 225,
+                                       :metric 0.782122905027933,
+                                       :type :test}
+                                      {:count 545,
+                                       :metric 0.782122905027933,
+                                       :type :test}
+                                      {:count 585,
+                                       :metric 0.782122905027933,
+                                       :type :test}
+                                      {:count 65,
+                                       :metric 0.776536312849162,
+                                       :type :test}
+                                      {:count 145,
+                                       :metric 0.776536312849162,
+                                       :type :test}
+                                      {:count 305,
+                                       :metric 0.776536312849162,
+                                       :type :test}
+                                      {:count 135,
+                                       :metric 0.7709497206703911,
+                                       :type :test}
+                                      {:count 195,
+                                       :metric 0.7709497206703911,
+                                       :type :test}
+                                      {:count 235,
+                                       :metric 0.7709497206703911,
+                                       :type :test}
+                                      {:count 265,
+                                       :metric 0.7653631284916201,
+                                       :type :test}
+                                      {:count 175,
+                                       :metric 0.7541899441340782,
+                                       :type :test}
+                                      {:count 75,
+                                       :metric 0.7486033519553073,
+                                       :type :test}
+                                      {:count 205,
+                                       :metric 0.7486033519553073,
+                                       :type :test}
+                                      {:count 55,
+                                       :metric 0.7430167597765363,
+                                       :type :test}
+                                      {:count 275,
+                                       :metric 0.7430167597765363,
+                                       :type :test}
+                                      {:count 25,
+                                       :metric 0.7206703910614525,
+                                       :type :test}
+                                      {:count 45,
+                                       :metric 0.7039106145251397,
+                                       :type :test}
+                                      {:count 35,
+                                       :metric 0.6871508379888268,
+                                       :type :test}
+                                      {:count 5,
+                                       :metric 0.6368715083798883,
+                                       :type :test})},
+                      :width 500,
+                      :height 500,
+                      :mark {:type "line"},
+                      :encoding {:x {:field :count,
+                                     :type "quantitative"},
+                                 :y {:field :metric,
+                                     :type "quantitative"},
+                                 :color {:field :type}}}]}
+           {:out "",
+            :id :a81afd79-87c1-4442-83f3-195bd3f41616,
+            :code "(comment\n  (->>\n   (map\n    #(hash-map :test-metric %1\n               :train-metric %2\n               :better? (if (> %1 %2) :test :train))\n    (->> training-curve-evaluations flatten (map :metric))\n    (->> training-curve-evaluations flatten (map #(get-in % [:train-prediction :metric]))))\n   (map :better?)\n   frequencies)\n\n  (println\n   (-> (ds/dataset {:x [\"A\" \"B\" \"C\" \"D\" \"E\" \"F\"] :y (range)})\n       (ds/categorical->one-hot [:x] {} :int)\n       (ds/set-inference-target :y)\n       (scicloj.metamorph.ml/train {:model-type :smile.regression/ordinary-least-square})\n       ml/thaw-model)))",
+            :ns "studio.notebook.ml-titanic",
+            :hiccup [:div.p-2.clj-nil [:p "nil"]]}],
+ :meta {:id :57264045-ec03-45d0-9f8c-c90dc411d4aa,
+        :eval-time "2022-06-01 08:23:55",
+        :ns "studio.notebook.ml-titanic",
+        :java "17.0.3",
+        :clojure "1.10.3"}}

@@ -1,21 +1,21 @@
-; saved on 2022-06-01 04:00:58
+; saved on 2022-06-01 08:22:37
 {:content [{:out "",
-            :id :5e02d890-d377-4b54-8d94-f085c0502a23,
+            :id :a7a95856-5eb0-4b1b-aad5-1830f99c0b69,
             :code "(ns studio.notebook.hello)",
             :ns "studio.notebook.hello",
             :hiccup [:div.p-2.clj-nil [:p "nil"]]}
            {:out "welcome to goldly studio\n",
-            :id :8a6a2d6d-d990-454b-b37b-741df3ba0ae0,
+            :id :a7889984-b14b-492a-a2e6-7c0ee2e1b7d6,
             :code "(println \"welcome to goldly studio\")",
             :ns "studio.notebook.hello",
             :hiccup [:div.p-2.clj-nil [:p "nil"]]}
            {:out "",
-            :id :80609e1c-7907-4863-8e9d-f4e9960614a5,
+            :id :6b09a4e3-b519-4498-9c9e-366de8c11498,
             :code "(+ 7 7)",
             :ns "studio.notebook.hello",
             :hiccup [:span {:style {:color "blue"}} "14"]}],
- :meta {:id :e1ce6a48-f649-44a3-86f5-c9294028bd75,
-        :eval-time "2022-06-01 04:00:58",
+ :meta {:id :e7cc9d62-5ae6-4b91-a61a-23ec0f98e9ba,
+        :eval-time "2022-06-01 08:22:37",
         :ns "studio.notebook.hello",
         :java "17.0.3",
         :clojure "1.10.3"}}

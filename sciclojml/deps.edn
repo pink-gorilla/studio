@@ -7,6 +7,7 @@
   org.scicloj/scicloj.ml.clj-djl {:mvn/version "0.1.11"}
   scicloj/scicloj.ml.xgboost     {:mvn/version "5.1.1"}
   scicloj/sklearn-clj            {:mvn/version "0.3.7"}
+     
 ;  
   }}
 
