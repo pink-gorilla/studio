@@ -1,0 +1,6 @@
+
+
+:dependencies [[org.clojure/clojure "1.10.1"]
+               [org.pinkgorilla/goldly "0.2.3"]
+               [org.clojure/tools.logging "1.1.0"] ; needed by clojisr
+               [org.pinkgorilla/clojisr-gorilla "0.0.6"]]
