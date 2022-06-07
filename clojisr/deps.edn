@@ -1,5 +1,16 @@
 
 
+ ; ClojisR                 
+                 [scicloj/clojisr "1.0.0-BETA11"]
+                 
+                 ;; pinkgorilla-vizualisation
+                 [org.pinkgorilla/gorilla-renderable "3.0.7"] ; to implement pink-gorilla renderer
+                 [com.rpl/specter "1.1.3"] ; clojisr.util, svg width/height injection
+                 [org.clojure/data.xml "0.0.8"] ; make sure old version from tagsoup is not used
+                 [clj-tagsoup/clj-tagsoup "0.3.0" ; to parse xml from the svg
+
+
+
 :dependencies [[org.clojure/clojure "1.10.1"]
                [org.pinkgorilla/goldly "0.2.3"]
                [org.clojure/tools.logging "1.1.0"] ; needed by clojisr
